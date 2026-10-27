@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "clerk-auth",
+  "name": "Clerk Auth Integration",
+  "version": "1.0.0",
+  "description": "Clerk authentication provider for Next.js App Router.",
+  "compatibility": {
+    "framework": "nextjs",
+    "language": "typescript",
+    "router": "app-router"
+  },
+  "dependencies": {
+    "npm": {
+      "@clerk/nextjs": "^5.0.0"
+    }
+  },
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "required": true,
+      "secret": false,
+      "description": "Clerk publishable key"
+    },
+    {
+      "key": "CLERK_SECRET_KEY",
+      "required": true,
+      "secret": true,
+      "description": "Clerk secret key"
+    }
+  ],
+  "injections": [
+    {
+      "type": "jsx_wrapper",
+      "targetFile": "src/app/layout.tsx",
+      "import": {
+        "identifier": "ClerkProvider",
+        "module": "@clerk/nextjs"
+      },
+      "wrapperComponent": "ClerkProvider"
+    }
+  ],
+  "agentContext": {
+    "rulesFile": "prompts/auth-rules.md"
+  }
+}
