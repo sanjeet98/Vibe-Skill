@@ -1,0 +1,23 @@
+{
+  "name": "@antigravity/mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "tsc --noEmit",
+    "test": "echo \"@antigravity/mcp-server: tests placeholder\""
+  },
+  "dependencies": {
+    "@antigravity/ast-engine": "workspace:*",
+    "@antigravity/infra-core": "workspace:*",
+    "@antigravity/manifest": "workspace:*"
+  },
+  "devDependencies": {
+    "@antigravity/tsconfig": "workspace:*",
+    "@types/node": "^22.13.0",
+    "typescript": "^5.8.2"
+  }
+}
