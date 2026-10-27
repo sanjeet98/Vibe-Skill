@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "db-drizzle-pg",
+  "name": "Drizzle ORM for PostgreSQL",
+  "version": "1.0.0",
+  "description": "Type-safe Drizzle ORM setup for PostgreSQL database connection and migrations.",
+  "compatibility": {
+    "framework": "nextjs",
+    "language": "typescript",
+    "router": "app-router"
+  },
+  "dependencies": {
+    "npm": {
+      "drizzle-orm": "^0.33.0",
+      "postgres": "^3.4.4"
+    }
+  },
+  "env": [
+    {
+      "key": "DATABASE_URL",
+      "required": true,
+      "secret": true,
+      "description": "PostgreSQL connection string"
+    }
+  ],
+  "database": {
+    "orm": "drizzle",
+    "schemaFiles": [
+      {
+        "source": "templates/schema.ts",
+        "target": "src/db/schema/users.ts",
+        "exportTarget": "src/db/schema/index.ts"
+      }
+    ],
+    "migrationCommand": "pnpm drizzle-kit push"
+  },
+  "injections": [],
+  "agentContext": {
+    "rulesFile": "prompts/rules.md"
+  }
+}

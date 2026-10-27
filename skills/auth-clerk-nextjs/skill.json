@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "auth-clerk-nextjs",
+  "name": "Clerk Authentication for Next.js",
+  "version": "1.0.0",
+  "description": "Production-grade Clerk authentication for Next.js App Router with provider wrapper and middleware.",
+  "compatibility": {
+    "framework": "nextjs",
+    "language": "typescript",
+    "router": "app-router"
+  },
+  "dependencies": {
+    "npm": {
+      "@clerk/nextjs": "^5.0.0"
+    }
+  },
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "required": true,
+      "secret": false,
+      "description": "Clerk publishable key for client SDK"
+    },
+    {
+      "key": "CLERK_SECRET_KEY",
+      "required": true,
+      "secret": true,
+      "description": "Clerk secret key for server verification"
+    }
+  ],
+  "injections": [
+    {
+      "type": "jsx_wrapper",
+      "targetFile": "src/app/layout.tsx",
+      "import": {
+        "identifier": "ClerkProvider",
+        "module": "@clerk/nextjs"
+      },
+      "wrapperComponent": "ClerkProvider"
+    },
+    {
+      "type": "middleware_chain",
+      "targetFile": "src/middleware.ts",
+      "import": {
+        "identifier": "clerkMiddleware",
+        "module": "@clerk/nextjs/server"
+      },
+      "pipelineStep": "clerkMiddleware()"
+    }
+  ],
+  "agentContext": {
+    "rulesFile": "prompts/rules.md"
+  }
+}

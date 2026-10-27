@@ -1,40 +1,50 @@
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { registerMcpTools } from "./tools/index.js";
+
+export * from "./tools/index.js";
+export * from "./catalog.js";
+
 /**
- * @antigravity/mcp-server
- * Model Context Protocol (MCP) server for Antigravity skills and AST scaffolding tools.
+ * Creates and configures the Antigravity MCP Server.
  */
-
-import { ASTEngine } from "@antigravity/ast-engine";
-import { RegistryClient } from "@antigravity/infra-core";
-
-export interface MCPServerConfig {
-  name: string;
-  version: string;
-  registryUrl?: string;
-}
-
-export class AntigravityMCPServer {
-  private astEngine: ASTEngine;
-  private registryClient: RegistryClient;
-
-  constructor(private readonly config: MCPServerConfig) {
-    this.astEngine = new ASTEngine();
-    this.registryClient = new RegistryClient({
-      registryUrl: config.registryUrl || "https://registry.antigravity.dev",
-    });
-  }
-
-  async start(): Promise<void> {
-    console.log(`Starting ${this.config.name} v${this.config.version}...`);
-  }
-}
-
-if (process.env.NODE_ENV !== "test") {
-  const server = new AntigravityMCPServer({
+export function createServer(): McpServer {
+  const server = new McpServer({
     name: "antigravity-mcp-server",
     version: "0.1.0",
   });
-  server.start().catch((err) => {
-    console.error("Failed to start MCP server:", err);
+
+  registerMcpTools(server);
+  return server;
+}
+
+/**
+ * Starts the MCP Server over StdioServerTransport for AI agents (Cursor, Claude Code, Windsurf).
+ */
+export async function startServer(): Promise<void> {
+  const server = createServer();
+  const transport = new StdioServerTransport();
+
+  // Log lifecycle messages exclusively to stderr to protect stdio JSON-RPC transport
+  process.stderr.write(
+    "[antigravity-mcp-server] Initializing stdio transport...\n",
+  );
+
+  await server.connect(transport);
+  process.stderr.write("[antigravity-mcp-server] Server listening on stdio.\n");
+}
+
+// Auto-start if executed directly
+if (
+  process.argv[1] &&
+  (process.argv[1].endsWith("mcp-server") ||
+    process.argv[1].endsWith("index.js") ||
+    process.argv[1].endsWith("index.ts"))
+) {
+  startServer().catch((error) => {
+    process.stderr.write(
+      `[antigravity-mcp-server] Fatal error: ${(error as Error).message}\n`,
+    );
     process.exit(1);
   });
 }
