@@ -1,33 +1,7 @@
 /**
  * @antigravity/manifest
- * Skill manifest schemas, parsing, and validation definitions.
+ * JSON Schema specification and runtime validator for Antigravity skill definitions (skill.json).
  */
 
-export interface SkillAuthor {
-  name: string;
-  email?: string;
-  url?: string;
-}
-
-export interface SkillCapability {
-  name: string;
-  description: string;
-  parameters?: Record<string, unknown>;
-}
-
-export interface SkillManifest {
-  schemaVersion: string;
-  name: string;
-  version: string;
-  description: string;
-  author: SkillAuthor;
-  license?: string;
-  repository?: string;
-  tags?: string[];
-  capabilities?: SkillCapability[];
-  dependencies?: Record<string, string>;
-}
-
-export function defineSkillManifest(manifest: SkillManifest): SkillManifest {
-  return manifest;
-}
+export * from "./schema.js";
+export * from "./validator.js";
