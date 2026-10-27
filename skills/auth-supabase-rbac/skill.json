@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "auth-supabase-rbac",
+  "name": "Supabase Auth & RBAC for Next.js",
+  "version": "1.0.0",
+  "description": "Production-ready Supabase Authentication with Role-Based Access Control (RBAC), SSR cookie handling, and Row-Level Security (RLS) policies for Next.js App Router.",
+  "compatibility": {
+    "framework": "nextjs",
+    "language": "typescript",
+    "router": "app-router"
+  },
+  "dependencies": {
+    "npm": {
+      "@supabase/supabase-js": "^2.49.1",
+      "@supabase/ssr": "^0.5.2"
+    }
+  },
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "required": true,
+      "secret": false,
+      "description": "Public project URL for Supabase instance"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "required": true,
+      "secret": false,
+      "description": "Public anonymous API key for client-side queries"
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "required": true,
+      "secret": true,
+      "description": "Secret service role key for administrative tasks and role management"
+    }
+  ],
+  "injections": [
+    {
+      "type": "jsx_wrapper",
+      "targetFile": "src/app/layout.tsx",
+      "import": {
+        "identifier": "AuthProvider",
+        "module": "@/components/auth-provider"
+      },
+      "wrapperComponent": "AuthProvider"
+    },
+    {
+      "type": "middleware_chain",
+      "targetFile": "src/middleware.ts",
+      "import": {
+        "identifier": "updateSession",
+        "module": "@/lib/supabase/middleware"
+      },
+      "pipelineStep": "updateSession(request)"
+    }
+  ],
+  "agentContext": {
+    "rulesFile": "agent/rules.md"
+  }
+}

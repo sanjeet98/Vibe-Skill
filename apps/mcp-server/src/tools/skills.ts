@@ -131,6 +131,56 @@ export async function handleInstallSkill(
       }
     }
 
+    // Copy general template files if template/ directory exists
+    const templateDir = path.join(skill.skillDir, "template");
+    if (fs.existsSync(templateDir) && fs.statSync(templateDir).isDirectory()) {
+      const hasSrc = fs.existsSync(path.join(resolvedProject, "src"));
+
+      const copyTemplateDir = (sourceDir: string, relativePrefix: string) => {
+        const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+        for (const entry of entries) {
+          const entrySource = path.join(sourceDir, entry.name);
+          const relPath = relativePrefix
+            ? path.join(relativePrefix, entry.name)
+            : entry.name;
+
+          if (entry.isDirectory()) {
+            copyTemplateDir(entrySource, relPath);
+          } else if (entry.isFile()) {
+            let targetRel = relPath;
+            if (hasSrc) {
+              if (
+                relPath.startsWith("components/") ||
+                relPath.startsWith("lib/") ||
+                relPath === "middleware.ts"
+              ) {
+                targetRel = path.join("src", relPath);
+              } else if (relPath.startsWith("schema/")) {
+                targetRel = path.join(
+                  "supabase",
+                  "migrations",
+                  path.basename(relPath),
+                );
+              }
+            } else if (relPath.startsWith("schema/")) {
+              targetRel = path.join(
+                "supabase",
+                "migrations",
+                path.basename(relPath),
+              );
+            }
+
+            const targetDest = path.join(resolvedProject, targetRel);
+            fs.mkdirSync(path.dirname(targetDest), { recursive: true });
+            fs.copyFileSync(entrySource, targetDest);
+            filesCopied.push(targetRel);
+          }
+        }
+      };
+
+      copyTemplateDir(templateDir, "");
+    }
+
     // 2. Prepare AST injections
     const injectionsToApply: SkillInjection[] = [...manifest.injections];
 

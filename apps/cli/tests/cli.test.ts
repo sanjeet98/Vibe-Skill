@@ -131,4 +131,56 @@ describe("Antigravity CLI End-to-End Tests", () => {
       'requires framework "nextjs", but target project is "vite"',
     );
   });
+
+  it("installs the canonical auth-supabase-rbac blueprint end-to-end", async () => {
+    const supabaseSkillPath = path.resolve(
+      __dirname,
+      "../../../skills/auth-supabase-rbac",
+    );
+
+    const result = await addCommand(supabaseSkillPath, {
+      cwd: tempAppDir,
+      noInstall: true,
+      silent: true,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toHaveLength(0);
+    expect(result.manifest?.id).toBe("auth-supabase-rbac");
+
+    // 1. Verify placed template files
+    expect(
+      fs.existsSync(path.join(tempAppDir, "src/components/auth-provider.tsx")),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(tempAppDir, "src/lib/supabase/client.ts")),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(tempAppDir, "src/lib/supabase/server.ts")),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(tempAppDir, "supabase/migrations/roles.sql")),
+    ).toBe(true);
+
+    // 2. Verify AST patched layout.tsx
+    const layoutContent = fs.readFileSync(
+      path.join(tempAppDir, "src/app/layout.tsx"),
+      "utf8",
+    );
+    expect(layoutContent).toContain(
+      "import { AuthProvider } from '@/components/auth-provider';",
+    );
+    expect(layoutContent).toContain(
+      '<body className="antialiased">\n        <AuthProvider>{children}</AuthProvider>\n      </body>',
+    );
+
+    // 3. Verify environment variables
+    const envContent = fs.readFileSync(
+      path.join(tempAppDir, ".env.local"),
+      "utf8",
+    );
+    expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_URL=");
+    expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY=");
+    expect(envContent).toContain("SUPABASE_SERVICE_ROLE_KEY=");
+  });
 });

@@ -36,38 +36,47 @@ export function resolveSkillPath(
   skillPathOrId: string,
   cwd: string = process.cwd(),
 ): { skillDir: string; manifestPath: string } {
-  const directPath = path.isAbsolute(skillPathOrId)
-    ? skillPathOrId
-    : path.resolve(cwd, skillPathOrId);
+  const candidateBases = [process.cwd(), cwd];
 
-  // If path is a file ending in .json
-  if (
-    fs.existsSync(directPath) &&
-    fs.statSync(directPath).isFile() &&
-    directPath.endsWith(".json")
-  ) {
-    return {
-      skillDir: path.dirname(directPath),
-      manifestPath: directPath,
-    };
-  }
+  for (const base of candidateBases) {
+    const directPath = path.isAbsolute(skillPathOrId)
+      ? skillPathOrId
+      : path.resolve(base, skillPathOrId);
 
-  // If path is a directory containing skill.json
-  const inDir = path.join(directPath, "skill.json");
-  if (fs.existsSync(inDir) && fs.statSync(inDir).isFile()) {
-    return {
-      skillDir: directPath,
-      manifestPath: inDir,
-    };
-  }
+    // If path is a file ending in .json
+    if (
+      fs.existsSync(directPath) &&
+      fs.statSync(directPath).isFile() &&
+      directPath.endsWith(".json")
+    ) {
+      return {
+        skillDir: path.dirname(directPath),
+        manifestPath: directPath,
+      };
+    }
 
-  // Check workspace / skills/<id>
-  const inSkillsDir = path.resolve(cwd, "skills", skillPathOrId, "skill.json");
-  if (fs.existsSync(inSkillsDir)) {
-    return {
-      skillDir: path.dirname(inSkillsDir),
-      manifestPath: inSkillsDir,
-    };
+    // If path is a directory containing skill.json
+    const inDir = path.join(directPath, "skill.json");
+    if (fs.existsSync(inDir) && fs.statSync(inDir).isFile()) {
+      return {
+        skillDir: directPath,
+        manifestPath: inDir,
+      };
+    }
+
+    // Check workspace / skills/<id>
+    const inSkillsDir = path.resolve(
+      base,
+      "skills",
+      skillPathOrId,
+      "skill.json",
+    );
+    if (fs.existsSync(inSkillsDir)) {
+      return {
+        skillDir: path.dirname(inSkillsDir),
+        manifestPath: inSkillsDir,
+      };
+    }
   }
 
   throw new Error(
@@ -169,6 +178,61 @@ export async function addCommand(
           }
         }
       }
+    }
+
+    // Copy general template files if template/ directory exists
+    const templateDir = path.join(skillDir, "template");
+    if (fs.existsSync(templateDir) && fs.statSync(templateDir).isDirectory()) {
+      const hasSrc = fs.existsSync(path.join(targetDir, "src"));
+
+      const copyTemplateDir = (sourceDir: string, relativePrefix: string) => {
+        const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+        for (const entry of entries) {
+          const entrySource = path.join(sourceDir, entry.name);
+          const relPath = relativePrefix
+            ? path.join(relativePrefix, entry.name)
+            : entry.name;
+
+          if (entry.isDirectory()) {
+            copyTemplateDir(entrySource, relPath);
+          } else if (entry.isFile()) {
+            let targetRel = relPath;
+            if (hasSrc) {
+              if (
+                relPath.startsWith("components/") ||
+                relPath.startsWith("lib/") ||
+                relPath === "middleware.ts"
+              ) {
+                targetRel = path.join("src", relPath);
+              } else if (relPath.startsWith("schema/")) {
+                targetRel = path.join(
+                  "supabase",
+                  "migrations",
+                  path.basename(relPath),
+                );
+              }
+            } else if (relPath.startsWith("schema/")) {
+              targetRel = path.join(
+                "supabase",
+                "migrations",
+                path.basename(relPath),
+              );
+            }
+
+            const targetDest = path.join(targetDir, targetRel);
+            if (!isDryRun) {
+              fs.mkdirSync(path.dirname(targetDest), { recursive: true });
+              fs.copyFileSync(entrySource, targetDest);
+            }
+            copiedFiles.push(targetRel);
+            if (!isSilent) {
+              p.log.step(`Placed template file: ${pc.dim(targetRel)}`);
+            }
+          }
+        }
+      };
+
+      copyTemplateDir(templateDir, "");
     }
 
     // 4. Execute AST Injections

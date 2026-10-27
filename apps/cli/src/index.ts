@@ -32,12 +32,17 @@ export function createProgram(): Command {
       "<skill-path-or-id>",
       "Path to skill directory or skill identifier",
     )
+    .option(
+      "--cwd <dir>",
+      "Target project directory (defaults to current working directory)",
+    )
     .option("-y, --yes", "Automatic yes to prompts")
     .option("--dry-run", "Simulate mutations without modifying files on disk")
     .option("--no-install", "Skip automatic npm/pnpm package installation")
     .option("-f, --force", "Bypass framework compatibility validation")
     .action(async (skillPathOrId, opts) => {
       await addCommand(skillPathOrId, {
+        cwd: opts.cwd,
         dryRun: opts.dryRun,
         yes: opts.yes,
         noInstall: !opts.install,
