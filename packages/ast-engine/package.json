@@ -17,14 +17,17 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "tsc --noEmit",
-    "test": "echo \"@antigravity/ast-engine: tests placeholder\""
+    "test": "vitest run"
   },
   "dependencies": {
-    "@antigravity/manifest": "workspace:*"
+    "@antigravity/manifest": "workspace:*",
+    "prettier": "^3.9.10",
+    "ts-morph": "^28.0.0"
   },
   "devDependencies": {
     "@antigravity/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^5.0.5"
   }
 }
