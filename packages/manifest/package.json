@@ -1,5 +1,5 @@
 {
-  "name": "@antigravity/manifest",
+  "name": "@vibe-skill/manifest",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -24,7 +24,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@antigravity/tsconfig": "workspace:*",
+    "@vibe-skill/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
     "@types/semver": "^7.8.0",
     "typescript": "^5.8.2",

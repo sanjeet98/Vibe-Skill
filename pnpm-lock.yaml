@@ -219,18 +219,18 @@ importers:
 
   apps/cli:
     dependencies:
-      "@antigravity/ast-engine":
-        specifier: workspace:*
-        version: link:../../packages/ast-engine
-      "@antigravity/infra-core":
-        specifier: workspace:*
-        version: link:../../packages/infra-core
-      "@antigravity/manifest":
-        specifier: workspace:*
-        version: link:../../packages/manifest
       "@clack/prompts":
         specifier: ^1.8.1
         version: 1.8.1
+      "@vibe-skill/ast-engine":
+        specifier: workspace:*
+        version: link:../../packages/ast-engine
+      "@vibe-skill/infra-core":
+        specifier: workspace:*
+        version: link:../../packages/infra-core
+      "@vibe-skill/manifest":
+        specifier: workspace:*
+        version: link:../../packages/manifest
       commander:
         specifier: ^15.0.0
         version: 15.0.0
@@ -241,15 +241,15 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
     devDependencies:
-      "@antigravity/tsconfig":
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       "@types/fs-extra":
         specifier: ^11.0.4
         version: 11.0.4
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5
+      "@vibe-skill/tsconfig":
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       tsup:
         specifier: ^9.0.0
         version: 9.0.0(postcss@8.5.31)(typescript@5.9.3)
@@ -262,28 +262,28 @@ importers:
 
   apps/mcp-server:
     dependencies:
-      "@antigravity/ast-engine":
-        specifier: workspace:*
-        version: link:../../packages/ast-engine
-      "@antigravity/infra-core":
-        specifier: workspace:*
-        version: link:../../packages/infra-core
-      "@antigravity/manifest":
-        specifier: workspace:*
-        version: link:../../packages/manifest
       "@modelcontextprotocol/sdk":
         specifier: ^1.1.0
         version: 1.32.2(zod@3.25.76)
+      "@vibe-skill/ast-engine":
+        specifier: workspace:*
+        version: link:../../packages/ast-engine
+      "@vibe-skill/infra-core":
+        specifier: workspace:*
+        version: link:../../packages/infra-core
+      "@vibe-skill/manifest":
+        specifier: workspace:*
+        version: link:../../packages/manifest
       zod:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      "@antigravity/tsconfig":
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5
+      "@vibe-skill/tsconfig":
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       tsup:
         specifier: ^9.0.0
         version: 9.0.0(postcss@8.5.31)(typescript@5.9.3)
@@ -296,7 +296,7 @@ importers:
 
   packages/ast-engine:
     dependencies:
-      "@antigravity/manifest":
+      "@vibe-skill/manifest":
         specifier: workspace:*
         version: link:../manifest
       prettier:
@@ -306,31 +306,31 @@ importers:
         specifier: ^28.0.0
         version: 28.0.0
     devDependencies:
-      "@antigravity/tsconfig":
-        specifier: workspace:*
-        version: link:../tsconfig
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5
+      "@vibe-skill/tsconfig":
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@22.20.5)(vite@8.3.5(@types/node@22.20.5))
+        version: 5.0.5(@types/node@22.20.5)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2))
 
   packages/infra-core:
     dependencies:
-      "@antigravity/manifest":
+      "@vibe-skill/manifest":
         specifier: workspace:*
         version: link:../manifest
     devDependencies:
-      "@antigravity/tsconfig":
-        specifier: workspace:*
-        version: link:../tsconfig
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5
+      "@vibe-skill/tsconfig":
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -344,21 +344,21 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
-      "@antigravity/tsconfig":
-        specifier: workspace:*
-        version: link:../tsconfig
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5
       "@types/semver":
         specifier: ^7.8.0
         version: 7.8.0
+      "@vibe-skill/tsconfig":
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@22.20.5)(vite@8.3.5(@types/node@22.20.5))
+        version: 5.0.5(@types/node@22.20.5)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2))
 
   packages/tsconfig: {}
 
@@ -2819,15 +2819,6 @@ snapshots:
     optionalDependencies:
       vite: 8.3.5(@types/node@22.20.5)(esbuild@0.28.2)
 
-  "@vitest/mocker@5.0.5(vite@8.3.5(@types/node@22.20.5))":
-    dependencies:
-      "@jridgewell/trace-mapping": 0.3.31
-      "@vitest/spy": 5.0.5
-      estree-walker: 3.0.3
-      magic-string: 1.4.4
-    optionalDependencies:
-      vite: 8.3.5(@types/node@22.20.5)
-
   "@vitest/spy@5.0.5": {}
 
   accepts@2.0.0:
@@ -3563,17 +3554,6 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@8.3.5(@types/node@22.20.5):
-    dependencies:
-      lightningcss: 1.33.0
-      picomatch: 4.0.7
-      postcss: 8.5.31
-      rolldown: 1.2.15
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      "@types/node": 22.20.5
-      fsevents: 2.3.3
-
   vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2):
     dependencies:
       lightningcss: 1.33.0
@@ -3601,27 +3581,6 @@ snapshots:
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
       vite: 8.3.5(@types/node@22.20.5)(esbuild@0.28.2)
-      why-is-node-running: 3.2.1
-    optionalDependencies:
-      "@types/node": 22.20.5
-    transitivePeerDependencies:
-      - msw
-
-  vitest@5.0.5(@types/node@22.20.5)(vite@8.3.5(@types/node@22.20.5)):
-    dependencies:
-      "@types/chai": 5.2.3
-      "@vitest/mocker": 5.0.5(vite@8.3.5(@types/node@22.20.5))
-      chai: 6.3.0
-      es-module-lexer: 2.3.2
-      expect-type: 1.4.0
-      magic-string: 1.4.4
-      obug: 3.0.0
-      picomatch: 4.0.7
-      std-env: 4.3.0
-      tinybench: 6.2.2
-      tinyexec: 1.3.1
-      tinyglobby: 0.2.17
-      vite: 8.3.5(@types/node@22.20.5)
       why-is-node-running: 3.2.1
     optionalDependencies:
       "@types/node": 22.20.5

@@ -7,16 +7,14 @@ import { initCommand } from "../src/commands/init.js";
 import { listCommand } from "../src/commands/list.js";
 import { detectProject } from "../src/utils/project.js";
 
-describe("Antigravity CLI End-to-End Tests", () => {
+describe("Vibe Skill CLI End-to-End Tests", () => {
   let tempAppDir: string;
   const fixturesDir = path.resolve(__dirname, "../fixtures");
   const sampleAppFixture = path.join(fixturesDir, "sample-app");
   const sampleSkillFixture = path.join(fixturesDir, "sample-skill");
 
   beforeEach(() => {
-    tempAppDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "antigravity-cli-test-"),
-    );
+    tempAppDir = fs.mkdtempSync(path.join(os.tmpdir(), "vibe-skill-cli-test-"));
     // Copy sample app into temp dir to keep fixture clean
     fs.cpSync(sampleAppFixture, tempAppDir, { recursive: true });
   });
@@ -37,19 +35,15 @@ describe("Antigravity CLI End-to-End Tests", () => {
     expect(project.router).toBe("app-router");
   });
 
-  it("runs antigravity init to initialize project lockfile", async () => {
+  it("runs vibe-skill init to initialize project lockfile", async () => {
     const result = await initCommand({ cwd: tempAppDir, silent: true });
     expect(result.success).toBe(true);
 
-    const lockfilePath = path.join(
-      tempAppDir,
-      ".antigravity",
-      "installed.json",
-    );
+    const lockfilePath = path.join(tempAppDir, ".vibe-skill", "installed.json");
     expect(fs.existsSync(lockfilePath)).toBe(true);
   });
 
-  it("runs antigravity add to inject a skill end-to-end into Next.js fixture", async () => {
+  it("runs vibe-skill add to inject a skill end-to-end into Next.js fixture", async () => {
     const result = await addCommand(sampleSkillFixture, {
       cwd: tempAppDir,
       noInstall: true,
@@ -78,14 +72,14 @@ describe("Antigravity CLI End-to-End Tests", () => {
     expect(envContent).toContain("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=");
     expect(envContent).toContain("CLERK_SECRET_KEY=");
 
-    // 3. Verify .antigravity/installed.json record
+    // 3. Verify .vibe-skill/installed.json record
     const listResult = listCommand({ cwd: tempAppDir, silent: true });
     expect(listResult.skills).toHaveLength(1);
     expect(listResult.skills[0].id).toBe("clerk-auth");
     expect(listResult.skills[0].name).toBe("Clerk Auth Integration");
   });
 
-  it("is idempotent when running antigravity add multiple times", async () => {
+  it("is idempotent when running vibe-skill add multiple times", async () => {
     // Pass 1
     const res1 = await addCommand(sampleSkillFixture, {
       cwd: tempAppDir,

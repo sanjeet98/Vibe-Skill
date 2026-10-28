@@ -9,7 +9,7 @@ import {
   handleListAvailableSkills,
 } from "../src/index.js";
 
-describe("Antigravity MCP Server & Programmatic Tools", () => {
+describe("Vibe Skill MCP Server & Programmatic Tools", () => {
   let tempAppDir: string;
 
   beforeEach(() => {
@@ -89,7 +89,7 @@ describe("Antigravity MCP Server & Programmatic Tools", () => {
     const response = handleInspectSkill("non-existent-skill");
     expect(response.found).toBe(false);
     expect(response.message).toContain(
-      "was not found in the Antigravity catalog",
+      "was not found in the Vibe Skill catalog",
     );
   });
 
@@ -123,12 +123,8 @@ describe("Antigravity MCP Server & Programmatic Tools", () => {
     expect(envContent).toContain("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=");
     expect(envContent).toContain("CLERK_SECRET_KEY=");
 
-    // 3. Verify .antigravity/installed.json record
-    const lockfilePath = path.join(
-      tempAppDir,
-      ".antigravity",
-      "installed.json",
-    );
+    // 3. Verify .vibe-skill/installed.json record
+    const lockfilePath = path.join(tempAppDir, ".vibe-skill", "installed.json");
     expect(fs.existsSync(lockfilePath)).toBe(true);
     const lockData = JSON.parse(fs.readFileSync(lockfilePath, "utf8"));
     expect(lockData.installedSkills["auth-clerk-nextjs"]).toBeDefined();

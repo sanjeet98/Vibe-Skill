@@ -177,7 +177,7 @@ export const AgentContextConfigSchema = z.object({
 export type AgentContextConfig = z.infer<typeof AgentContextConfigSchema>;
 
 /**
- * Top-level Antigravity Skill Manifest Schema (`skill.json`).
+ * Top-level Vibe Skill Manifest Schema (`skill.json`).
  */
 export const SkillManifestSchema = z.object({
   schemaVersion: SemverSchema,

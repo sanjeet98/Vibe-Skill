@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { applyInjections, type SkillInjection } from "@antigravity/ast-engine";
+import { applyInjections, type SkillInjection } from "@vibe-skill/ast-engine";
 import { getAllAvailableSkills, getSkillById } from "../catalog.js";
 
 export interface ListSkillsResponse {
@@ -72,7 +72,7 @@ export function handleInspectSkill(skillId: string): InspectSkillResponse {
     return {
       found: false,
       skillId,
-      message: `Skill with id "${skillId}" was not found in the Antigravity catalog. Run list_available_skills to view available packages.`,
+      message: `Skill with id "${skillId}" was not found in the Vibe Skill catalog. Run list_available_skills to view available packages.`,
     };
   }
 
@@ -249,7 +249,7 @@ export async function handleInstallSkill(
       });
 
       if (missing.length > 0) {
-        let block = `\n# --- Antigravity: ${manifest.name} ---\n`;
+        let block = `\n# --- Vibe Skill: ${manifest.name} ---\n`;
         for (const item of missing) {
           block += `# ${item.description || item.key}\n${item.key}=\n`;
         }
@@ -257,10 +257,15 @@ export async function handleInstallSkill(
       }
     }
 
-    // 5. Record in .antigravity/installed.json
-    const antigravityDir = path.join(resolvedProject, ".antigravity");
-    fs.mkdirSync(antigravityDir, { recursive: true });
-    const lockfilePath = path.join(antigravityDir, "installed.json");
+    // 5. Record in .vibe-skill/installed.json (or .antigravity/installed.json if legacy exists)
+    const vibeDir = path.join(resolvedProject, ".vibe-skill");
+    const legacyDir = path.join(resolvedProject, ".antigravity");
+    const lockfilePath =
+      !fs.existsSync(vibeDir) &&
+      fs.existsSync(path.join(legacyDir, "installed.json"))
+        ? path.join(legacyDir, "installed.json")
+        : path.join(vibeDir, "installed.json");
+    fs.mkdirSync(path.dirname(lockfilePath), { recursive: true });
 
     let lockData: {
       schemaVersion: string;

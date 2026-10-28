@@ -1,9 +1,9 @@
 /**
- * @antigravity/infra-core
+ * @vibe-skill/infra-core
  * Core infrastructure, registry client, storage, and execution runtime.
  */
 
-import type { SkillManifest } from "@antigravity/manifest";
+import type { SkillManifest } from "@vibe-skill/manifest";
 
 export interface RegistryConfig {
   registryUrl: string;

@@ -1,5 +1,5 @@
 /**
- * @antigravity/ast-engine
+ * @vibe-skill/ast-engine
  * Deterministic AST code merging engine using ts-morph.
  */
 

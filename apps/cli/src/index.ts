@@ -5,9 +5,9 @@ export function createProgram(): Command {
   const program = new Command();
 
   program
-    .name("antigravity")
+    .name("vibe-skill")
     .description(
-      "Antigravity: Open-source full-stack agent skills registry and AST scaffolding CLI",
+      "Vibe Skill: Open-source full-stack agent skills registry and AST scaffolding CLI",
     )
     .version("0.1.0");
 
@@ -15,7 +15,7 @@ export function createProgram(): Command {
   program
     .command("init")
     .description(
-      "Initialize Antigravity in the current repository and detect project setup",
+      "Initialize Vibe Skill in the current repository and detect project setup",
     )
     .argument("[dir]", "Target directory", ".")
     .action(async (dir) => {
@@ -25,9 +25,7 @@ export function createProgram(): Command {
   // add command
   program
     .command("add")
-    .description(
-      "Install and inject an Antigravity skill into the current project",
-    )
+    .description("Install and inject a Vibe Skill into the current project")
     .argument(
       "<skill-path-or-id>",
       "Path to skill directory or skill identifier",
@@ -53,7 +51,7 @@ export function createProgram(): Command {
   // list command
   program
     .command("list")
-    .description("List all Antigravity skills installed in this project")
+    .description("List all Vibe Skill skills installed in this project")
     .action(() => {
       listCommand();
     });
@@ -69,7 +67,8 @@ export async function runCli(argv = process.argv): Promise<void> {
 // Auto-run if executed directly as entrypoint
 if (
   process.argv[1] &&
-  (process.argv[1].endsWith("antigravity") ||
+  (process.argv[1].endsWith("vibe-skill") ||
+    process.argv[1].endsWith("antigravity") ||
     process.argv[1].endsWith("index.js") ||
     process.argv[1].endsWith("index.ts"))
 ) {

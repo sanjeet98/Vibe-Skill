@@ -16,7 +16,7 @@ export function formatZodError(error: z.ZodError): string[] {
 }
 
 /**
- * Validates unknown JSON input against the Antigravity SkillManifest schema.
+ * Validates unknown JSON input against the Vibe Skill SkillManifest schema.
  *
  * @param json - Parsed JSON object to validate.
  * @returns An object indicating success with parsed data, or failure with formatted error list.

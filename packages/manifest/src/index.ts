@@ -1,6 +1,6 @@
 /**
- * @antigravity/manifest
- * JSON Schema specification and runtime validator for Antigravity skill definitions (skill.json).
+ * @vibe-skill/manifest
+ * JSON Schema specification and runtime validator for Vibe Skill skill definitions (skill.json).
  */
 
 export * from "./schema.js";

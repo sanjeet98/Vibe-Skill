@@ -1,6 +1,6 @@
-# Antigravity Architecture & Technical Specifications
+# Vibe Skill Architecture & Technical Specifications
 
-This directory contains formal technical specifications, RFCs, and architecture documents for the Antigravity ecosystem.
+This directory contains formal technical specifications, RFCs, and architecture documents for the Vibe Skill ecosystem.
 
 ## Contents
 

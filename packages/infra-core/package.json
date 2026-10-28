@@ -1,5 +1,5 @@
 {
-  "name": "@antigravity/infra-core",
+  "name": "@vibe-skill/infra-core",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,13 +17,13 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "tsc --noEmit",
-    "test": "echo \"@antigravity/infra-core: tests placeholder\""
+    "test": "echo \"@vibe-skill/infra-core: tests placeholder\""
   },
   "dependencies": {
-    "@antigravity/manifest": "workspace:*"
+    "@vibe-skill/manifest": "workspace:*"
   },
   "devDependencies": {
-    "@antigravity/tsconfig": "workspace:*",
+    "@vibe-skill/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
     "typescript": "^5.8.2"
   }

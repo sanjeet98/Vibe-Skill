@@ -3,13 +3,13 @@
 **Document ID:** SPEC-004  
 **Status:** Approved  
 **Version:** 1.0.0  
-**Package:** `@antigravity/mcp-server`
+**Package:** `@vibe-skill/mcp-server`
 
 ---
 
 ## 1. Overview
 
-The **Antigravity MCP Server** allows AI coding assistants (such as **Claude Desktop**, **Cursor**, **Claude Code**, and **Windsurf**) to programmatically discover, inspect, and install verified skills into a developer's codebase.
+The **Vibe Skill MCP Server** allows AI coding assistants (such as **Claude Desktop**, **Cursor**, **Claude Code**, and **Windsurf**) to programmatically discover, inspect, and install verified skills into a developer's codebase.
 
 The server operates over standard input/output (`stdio`) using JSON-RPC, exposing three primary tools:
 
@@ -23,21 +23,21 @@ The server operates over standard input/output (`stdio`) using JSON-RPC, exposin
 
 ### 2.1 Claude Desktop (`claude_desktop_config.json`)
 
-To enable Antigravity in Claude Desktop, edit your platform configuration file:
+To enable Vibe Skill in Claude Desktop, edit your platform configuration file:
 
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
-Add the `antigravity` entry to `mcpServers`:
+Add the `vibe-skill` entry to `mcpServers`:
 
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
       "args": ["/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
       "env": {
-        "ANTIGRAVITY_SKILLS_PATH": "/path/to/Vibe-Skill/skills"
+        "VIBE_SKILLS_PATH": "/path/to/Vibe-Skill/skills"
       }
     }
   }
@@ -49,9 +49,9 @@ _Or via global npx / published package:_
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "npx",
-      "args": ["-y", "@antigravity/mcp-server"],
+      "args": ["-y", "@vibe-skill/mcp-server"],
       "env": {
         "NODE_ENV": "production"
       }
@@ -64,16 +64,16 @@ _Or via global npx / published package:_
 
 ### 2.2 Cursor IDE (`.cursor/mcp.json`)
 
-To enable Antigravity in Cursor across your team or workspace, create or edit `.cursor/mcp.json` at the root of your project:
+To enable Vibe Skill in Cursor across your team or workspace, create or edit `.cursor/mcp.json` at the root of your project:
 
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
-      "args": ["./node_modules/@antigravity/mcp-server/dist/index.js"],
+      "args": ["./node_modules/@vibe-skill/mcp-server/dist/index.js"],
       "env": {
-        "ANTIGRAVITY_SKILLS_PATH": "./skills"
+        "VIBE_SKILLS_PATH": "./skills"
       }
     }
   }
@@ -85,7 +85,7 @@ _Or via local monorepo path:_
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
       "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"]
     }
@@ -97,12 +97,12 @@ _Or via local monorepo path:_
 
 ### 2.3 Claude Code CLI
 
-To configure Antigravity for the **Claude Code** terminal agent:
+To configure Vibe Skill for the **Claude Code** terminal agent:
 
 Run the `mcp add` command:
 
 ```bash
-claude mcp add antigravity -- node /absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js
+claude mcp add vibe-skill -- node /absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js
 ```
 
 Or add to your project's `claude.json` / `~/.claude/settings.json`:
@@ -110,11 +110,11 @@ Or add to your project's `claude.json` / `~/.claude/settings.json`:
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
       "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
       "env": {
-        "ANTIGRAVITY_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
+        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
       }
     }
   }

@@ -1,15 +1,15 @@
-# Antigravity
+# Vibe Skill
 
 [![CI](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml/badge.svg)](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-> **Antigravity** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine designed to empower AI coding agents and human engineers with deterministic, high-fidelity code transformation and modular skill capabilities.
+> **Vibe Skill** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine designed to empower AI coding agents and human engineers with deterministic, high-fidelity code transformation and modular skill capabilities.
 
 ---
 
 ## Architecture Overview
 
-Antigravity bridges the gap between probabilistic AI agent reasoning and deterministic codebase modification. While AI agents excel at planning and understanding context, text-based code patching frequently introduces syntax errors, breaks formatting, and risks regressions. Antigravity introduces:
+Vibe Skill bridges the gap between probabilistic AI agent reasoning and deterministic codebase modification. While AI agents excel at planning and understanding context, text-based code patching frequently introduces syntax errors, breaks formatting, and risks regressions. Vibe Skill introduces:
 
 1. **Declarative Skill Manifests**: Standardized format (`skill.yaml`/`skill.json`) specifying agent capabilities, executable codemods, triggers, and execution boundaries.
 2. **Deterministic AST Scaffolding**: AST-based transformation engine that manipulates syntactic structures directly (imports, route handlers, middleware, schemas) without destroying formatting or producing invalid syntax.
@@ -19,12 +19,12 @@ Antigravity bridges the gap between probabilistic AI agent reasoning and determi
 ```
                               ┌─────────────────────────────┐
                               │      AI Coding Agent        │
-                              │ (Antigravity / Claude / IDE)│
+                              │ (Claude / Cursor / Agent)   │
                               └──────────────┬──────────────┘
                                              │  MCP Protocol
                                              ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 Antigravity Platform                                   │
+│                                  Vibe Skill Platform                                   │
 │                                                                                        │
 │   ┌────────────────────────┐                    ┌──────────────────────────────────┐   │
 │   │    apps/mcp-server     │                    │            apps/cli              │   │
@@ -55,13 +55,13 @@ The repository is organized as a high-performance monorepo powered by **pnpm wor
 ```text
 .
 ├── apps/
-│   ├── cli/             # @antigravity/cli - Developer command-line tool
-│   └── mcp-server/      # @antigravity/mcp-server - Model Context Protocol server for agents
+│   ├── cli/             # @vibe-skill/cli - Developer command-line tool
+│   └── mcp-server/      # @vibe-skill/mcp-server - Model Context Protocol server for agents
 ├── packages/
-│   ├── ast-engine/      # @antigravity/ast-engine - AST parsing, manipulation & codemods
-│   ├── infra-core/      # @antigravity/infra-core - Registry client, caching, and runtime
-│   ├── manifest/        # @antigravity/manifest - Skill specification schemas and validator
-│   └── tsconfig/        # @antigravity/tsconfig - Shared strict TypeScript configurations
+│   ├── ast-engine/      # @vibe-skill/ast-engine - AST parsing, manipulation & codemods
+│   ├── infra-core/      # @vibe-skill/infra-core - Registry client, caching, and runtime
+│   ├── manifest/        # @vibe-skill/manifest - Skill specification schemas and validator
+│   └── tsconfig/        # @vibe-skill/tsconfig - Shared strict TypeScript configurations
 ├── skills/              # Agent skill packages, recipes, and capability bundles
 ├── docs/
 │   ├── phases/          # Master engineering roadmap and phase breakdown

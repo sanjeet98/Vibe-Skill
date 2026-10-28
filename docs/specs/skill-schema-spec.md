@@ -1,17 +1,17 @@
-# Antigravity Specification: Skill Definition Schema (`skill.json`)
+# Vibe Skill Specification: Skill Definition Schema (`skill.json`)
 
 **Document ID:** SPEC-002  
 **Status:** Implemented  
 **Version:** 1.0.0  
-**Package:** `@antigravity/manifest`
+**Package:** `@vibe-skill/manifest`
 
 ---
 
 ## 1. Overview
 
-An **Antigravity Skill** is a modular, declarative capability unit designed to bridge AI coding agents with deterministic code synthesis. Every skill package MUST provide a `skill.json` (or `skill.yaml`) at its root that strictly adheres to the schema defined in this specification.
+A **Vibe Skill** is a modular, declarative capability unit designed to bridge AI coding agents with deterministic code synthesis. Every skill package MUST provide a `skill.json` (or `skill.yaml`) at its root that strictly adheres to the schema defined in this specification.
 
-Unlike unstructured prompts or loose markdown documentation, `skill.json` enables the Antigravity engine to:
+Unlike unstructured prompts or loose markdown documentation, `skill.json` enables the Vibe Skill engine to:
 
 1. **Enforce Deterministic Scaffolding:** Perform targeted AST mutations (`jsx_wrapper`, `named_export`, `middleware_chain`) rather than unpredictable search-and-replace text edits.
 2. **Resolve Runtime & Framework Compatibility:** Match project configurations against supported languages, frameworks, and routers.
@@ -24,7 +24,7 @@ Unlike unstructured prompts or loose markdown documentation, `skill.json` enable
 
 | Property        | Type                  | Required | Description                                                                                                   |
 | :-------------- | :-------------------- | :------: | :------------------------------------------------------------------------------------------------------------ |
-| `schemaVersion` | `string` (SemVer)     | **Yes**  | Version of the Antigravity manifest schema (e.g. `"1.0.0"`).                                                  |
+| `schemaVersion` | `string` (SemVer)     | **Yes**  | Version of the Vibe Skill manifest schema (e.g. `"1.0.0"`).                                                   |
 | `id`            | `string` (kebab-case) | **Yes**  | Unique package identifier consisting of lowercase letters, numbers, and hyphens (e.g. `"auth-clerk-nextjs"`). |
 | `name`          | `string`              | **Yes**  | Human-readable title of the skill.                                                                            |
 | `version`       | `string` (SemVer)     | **Yes**  | Semantic version of the skill implementation (e.g. `"0.1.0"`).                                                |
@@ -288,10 +288,10 @@ interface AgentContextConfig {
 
 ## 5. Programmatic API Usage
 
-Install and use `@antigravity/manifest` in your tooling or agent loop:
+Install and use `@vibe-skill/manifest` in your tooling or agent loop:
 
 ```typescript
-import { validateManifest, assertValidManifest } from "@antigravity/manifest";
+import { validateManifest, assertValidManifest } from "@vibe-skill/manifest";
 
 // Safe validation returning success flag & path-specific errors
 const result = validateManifest(rawJson);

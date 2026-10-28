@@ -129,14 +129,23 @@ export function detectProject(targetDir: string = process.cwd()): ProjectInfo {
 }
 
 /**
- * Returns path to `.antigravity/installed.json`.
+ * Returns path to `.vibe-skill/installed.json` (or `.antigravity/installed.json` if legacy exists).
  */
 export function getInstalledLockfilePath(projectRoot: string): string {
-  return path.join(projectRoot, ".antigravity", "installed.json");
+  const vibeSkillPath = path.join(projectRoot, ".vibe-skill", "installed.json");
+  const antigravityPath = path.join(
+    projectRoot,
+    ".antigravity",
+    "installed.json",
+  );
+  if (!fs.existsSync(vibeSkillPath) && fs.existsSync(antigravityPath)) {
+    return antigravityPath;
+  }
+  return vibeSkillPath;
 }
 
 /**
- * Loads the `.antigravity/installed.json` file, or returns empty state.
+ * Loads the installed skills lockfile, or returns empty state.
  */
 export function loadInstalledSkills(projectRoot: string): InstalledLockfile {
   const filePath = getInstalledLockfilePath(projectRoot);
@@ -162,7 +171,7 @@ export function loadInstalledSkills(projectRoot: string): InstalledLockfile {
 }
 
 /**
- * Saves a skill record to `.antigravity/installed.json`.
+ * Saves a skill record to the installed skills lockfile.
  */
 export function recordInstalledSkill(
   projectRoot: string,
@@ -171,11 +180,8 @@ export function recordInstalledSkill(
   const lockfile = loadInstalledSkills(projectRoot);
   lockfile.installedSkills[record.id] = record;
 
-  const dir = path.join(projectRoot, ".antigravity");
+  const targetPath = getInstalledLockfilePath(projectRoot);
+  const dir = path.dirname(targetPath);
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(
-    getInstalledLockfilePath(projectRoot),
-    JSON.stringify(lockfile, null, 2),
-    "utf8",
-  );
+  fs.writeFileSync(targetPath, JSON.stringify(lockfile, null, 2), "utf8");
 }

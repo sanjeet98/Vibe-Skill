@@ -17,7 +17,7 @@ export function listCommand(options: ListOptions = {}): {
   const isSilent = Boolean(options.silent);
 
   if (!isSilent) {
-    p.intro(pc.bgCyan(pc.black(" Antigravity Installed Skills ")));
+    p.intro(pc.bgCyan(pc.black(" Vibe Skill Installed Skills ")));
   }
 
   const lockfile = loadInstalledSkills(targetDir);
@@ -25,10 +25,10 @@ export function listCommand(options: ListOptions = {}): {
 
   if (skillsList.length === 0) {
     if (!isSilent) {
-      p.log.warn("No Antigravity skills installed in this project yet.");
+      p.log.warn("No Vibe Skill skills installed in this project yet.");
       p.outro(
         pc.dim(
-          'Run "antigravity add <skill-path-or-id>" to install your first skill.',
+          'Run "vibe-skill add <skill-path-or-id>" to install your first skill.',
         ),
       );
     }
@@ -58,7 +58,7 @@ export function listCommand(options: ListOptions = {}): {
 
     p.outro(
       pc.green("Use ") +
-        pc.cyan("antigravity add <skill>") +
+        pc.cyan("vibe-skill add <skill>") +
         pc.green(" to add more skills."),
     );
   }

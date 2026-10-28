@@ -1,8 +1,8 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { applyInjections, type SkillInjection } from "@antigravity/ast-engine";
-import { validateManifest, type SkillManifest } from "@antigravity/manifest";
+import { applyInjections, type SkillInjection } from "@vibe-skill/ast-engine";
+import { validateManifest, type SkillManifest } from "@vibe-skill/manifest";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import {
@@ -85,7 +85,7 @@ export function resolveSkillPath(
 }
 
 /**
- * Command: antigravity add <skill-path-or-id>
+ * Command: vibe-skill add <skill-path-or-id>
  */
 export async function addCommand(
   skillPathOrId: string,
@@ -96,7 +96,7 @@ export async function addCommand(
   const isDryRun = Boolean(options.dryRun);
 
   if (!isSilent) {
-    p.intro(pc.bgCyan(pc.black(" Antigravity Skill Installer ")));
+    p.intro(pc.bgCyan(pc.black(" Vibe Skill Installer ")));
   }
 
   const errors: string[] = [];
@@ -308,7 +308,7 @@ export async function addCommand(
       });
 
       if (missingEnvEntries.length > 0 && !isDryRun) {
-        let appendBlock = "\n# --- Antigravity: " + manifest.name + " ---\n";
+        let appendBlock = "\n# --- Vibe Skill: " + manifest.name + " ---\n";
         for (const envItem of missingEnvEntries) {
           appendBlock += `# ${envItem.description || envItem.key}\n${envItem.key}=\n`;
           addedEnvVars.push(envItem.key);
@@ -330,7 +330,7 @@ export async function addCommand(
           });
           if (missingInExample.length > 0) {
             let exampleAppend =
-              "\n# --- Antigravity: " + manifest.name + " ---\n";
+              "\n# --- Vibe Skill: " + manifest.name + " ---\n";
             for (const item of missingInExample) {
               exampleAppend += `# ${item.description || item.key}\n${item.key}=\n`;
             }

@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateManifest, type SkillManifest } from "@antigravity/manifest";
+import { validateManifest, type SkillManifest } from "@vibe-skill/manifest";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +19,9 @@ export interface LoadedSkill {
 export function getSkillsDirectories(): string[] {
   const dirs: string[] = [];
 
-  if (process.env.ANTIGRAVITY_SKILLS_PATH) {
+  if (process.env.VIBE_SKILLS_PATH) {
+    dirs.push(path.resolve(process.env.VIBE_SKILLS_PATH));
+  } else if (process.env.ANTIGRAVITY_SKILLS_PATH) {
     dirs.push(path.resolve(process.env.ANTIGRAVITY_SKILLS_PATH));
   }
 

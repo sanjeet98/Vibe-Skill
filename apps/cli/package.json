@@ -1,8 +1,9 @@
 {
-  "name": "@antigravity/cli",
+  "name": "@vibe-skill/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {
+    "vibe-skill": "./dist/index.js",
     "antigravity": "./dist/index.js"
   },
   "main": "./dist/index.js",
@@ -14,18 +15,18 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@antigravity/ast-engine": "workspace:*",
-    "@antigravity/infra-core": "workspace:*",
-    "@antigravity/manifest": "workspace:*",
     "@clack/prompts": "^1.8.1",
+    "@vibe-skill/ast-engine": "workspace:*",
+    "@vibe-skill/infra-core": "workspace:*",
+    "@vibe-skill/manifest": "workspace:*",
     "commander": "^15.0.0",
     "fs-extra": "^11.4.1",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@antigravity/tsconfig": "workspace:*",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.13.0",
+    "@vibe-skill/tsconfig": "workspace:*",
     "tsup": "^9.0.0",
     "typescript": "^5.8.2",
     "vitest": "^5.0.5"

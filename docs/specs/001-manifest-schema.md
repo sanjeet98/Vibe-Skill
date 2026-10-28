@@ -1,4 +1,4 @@
-# SPEC-001: Antigravity Skill Manifest Specification
+# SPEC-001: Vibe Skill Manifest Specification
 
 ## Status: Draft
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Defines the schema and structure of an Antigravity Skill Package. A skill package packages metadata, triggers, operational rules, tool definitions, and AST transformation templates.
+Defines the schema and structure of a Vibe Skill Package. A skill package packages metadata, triggers, operational rules, tool definitions, and AST transformation templates.
 
 ### Schema Fields
 

@@ -1,10 +1,10 @@
-# Antigravity: Master Engineering Roadmap
+# Vibe Skill: Master Engineering Roadmap
 
 ## Overview
 
-Antigravity is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges high-level AI agent capabilities with deterministic, production-grade code manipulation.
+Vibe Skill is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges high-level AI agent capabilities with deterministic, production-grade code manipulation.
 
-This master roadmap outlines the 6 engineering phases designed to take Antigravity from initial workspace scaffolding to an enterprise-grade agent skills ecosystem.
+This master roadmap outlines the 6 engineering phases designed to take Vibe Skill from initial workspace scaffolding to an enterprise-grade agent skills ecosystem.
 
 ---
 
@@ -47,14 +47,14 @@ flowchart LR
 
 ### Objectives
 
-- Define the formal schema for Antigravity skill definitions (`skill.yaml` and `skill.json`).
-- Implement declarative validation with Zod / JSON Schema in `@antigravity/manifest`.
+- Define the formal schema for Vibe Skill skill definitions (`skill.yaml` and `skill.json`).
+- Implement declarative validation with Zod / JSON Schema in `@vibe-skill/manifest`.
 - Support granular capability definitions (tools, prompts, codemods, execution permissions).
 - Establish semantic versioning and compatibility matrices for agent runtimes.
 
 ### Deliverables
 
-- `@antigravity/manifest` package with parser, validator, and schema generator.
+- `@vibe-skill/manifest` package with parser, validator, and schema generator.
 - Comprehensive JSON schemas and TypeScript typings.
 - Unit and property-based test suites verifying schema compliance.
 - Technical specification documentation in `docs/specs/001-manifest-schema.md`.
@@ -75,7 +75,7 @@ flowchart LR
 
 ### Deliverables
 
-- `@antigravity/ast-engine` core library with transform pipelines.
+- `@vibe-skill/ast-engine` core library with transform pipelines.
 - Language-specific parser adapters (TypeScript/Babel, Python libcst).
 - Diff generator and AST snapshot testing framework.
 - Formal AST Scaffolding Engine specification in `docs/specs/002-ast-scaffolding-engine.md`.
@@ -89,14 +89,14 @@ flowchart LR
 
 ### Objectives
 
-- Implement the client layer for publishing, discovering, and downloading skills from the Antigravity Registry.
+- Implement the client layer for publishing, discovering, and downloading skills from the Vibe Skill Registry.
 - Build local caching mechanisms with cryptographic integrity verification (SHA-256).
 - Create a safe runtime execution environment for running skill-defined pre-install and post-install hooks.
-- Provide unified workspace configuration management (`.antigravityrc.json`).
+- Provide unified workspace configuration management (`.vibe-skillrc.json`).
 
 ### Deliverables
 
-- `@antigravity/infra-core` client library.
+- `@vibe-skill/infra-core` client library.
 - Dependency resolution engine handling inter-skill dependencies.
 - Sandboxed execution harness with permission enforcement.
 - Local cache manager with content-addressable storage.
@@ -110,14 +110,14 @@ flowchart LR
 
 ### Objectives
 
-- Implement the `@antigravity/cli` binary (`antigravity`).
+- Implement the `@vibe-skill/cli` binary (`vibe-skill`).
 - Provide core user-facing commands:
-  - `antigravity init`: Initialize Antigravity in an existing repo.
-  - `antigravity search <query>`: Query available skills from the registry.
-  - `antigravity add <skill>`: Install skill and execute AST transformations.
-  - `antigravity create <skill>`: Scaffold a new skill package.
-  - `antigravity verify`: Validate manifests, AST codemods, and permissions.
-  - `antigravity publish`: Package and publish a skill to the registry.
+  - `vibe-skill init`: Initialize Vibe Skill in an existing repo.
+  - `vibe-skill search <query>`: Query available skills from the registry.
+  - `vibe-skill add <skill>`: Install skill and execute AST transformations.
+  - `vibe-skill create <skill>`: Scaffold a new skill package.
+  - `vibe-skill verify`: Validate manifests, AST codemods, and permissions.
+  - `vibe-skill publish`: Package and publish a skill to the registry.
 - Provide rich terminal feedback (interactive spinners, diff syntax highlighting, error explanations).
 
 ### Deliverables
@@ -136,9 +136,9 @@ flowchart LR
 
 ### Objectives
 
-- Implement `@antigravity/mcp-server` compliant with the standard Model Context Protocol.
-- Expose Antigravity skills, AST engines, and registry lookup as MCP tools, prompts, and resources.
-- Enable zero-friction integration with agent platforms (Antigravity IDE, Claude Desktop, Cursor, Gemini Code Assist, OpenAI agents).
+- Implement `@vibe-skill/mcp-server` compliant with the standard Model Context Protocol.
+- Expose Vibe Skill skills, AST engines, and registry lookup as MCP tools, prompts, and resources.
+- Enable zero-friction integration with agent platforms (Claude Desktop, Cursor, Claude Code, Windsurf, Gemini Code Assist, OpenAI agents).
 - Deploy public registry services and documentation hub.
 
 ### Deliverables

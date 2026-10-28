@@ -1,5 +1,5 @@
 {
-  "name": "@antigravity/ast-engine",
+  "name": "@vibe-skill/ast-engine",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,12 +20,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@antigravity/manifest": "workspace:*",
+    "@vibe-skill/manifest": "workspace:*",
     "prettier": "^3.9.10",
     "ts-morph": "^28.0.0"
   },
   "devDependencies": {
-    "@antigravity/tsconfig": "workspace:*",
+    "@vibe-skill/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
     "typescript": "^5.8.2",
     "vitest": "^5.0.5"

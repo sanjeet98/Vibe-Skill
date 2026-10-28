@@ -21,7 +21,7 @@ export async function initCommand(options: InitOptions = {}): Promise<{
   const project = detectProject(targetDir);
 
   if (!options.silent) {
-    p.intro(pc.bgCyan(pc.black(" Antigravity CLI ")));
+    p.intro(pc.bgCyan(pc.black(" Vibe Skill CLI ")));
   }
 
   if (!project.hasPackageJson && project.framework !== "fastapi") {
@@ -36,11 +36,11 @@ export async function initCommand(options: InitOptions = {}): Promise<{
     return { success: false, project };
   }
 
-  // Ensure .antigravity directory and installed.json lockfile exist
-  const antigravityDir = path.join(targetDir, ".antigravity");
-  fs.mkdirSync(antigravityDir, { recursive: true });
-
+  // Ensure lockfile directory and installed.json lockfile exist
   const lockfilePath = getInstalledLockfilePath(targetDir);
+  const lockfileDir = path.dirname(lockfilePath);
+  fs.mkdirSync(lockfileDir, { recursive: true });
+
   if (!fs.existsSync(lockfilePath)) {
     fs.writeFileSync(
       lockfilePath,
@@ -68,12 +68,11 @@ export async function initCommand(options: InitOptions = {}): Promise<{
       `Git Repository:  ${project.hasGit ? pc.green("yes") : pc.yellow("no")}`,
     );
 
-    p.log.step(
-      `Initialized ${pc.magenta(".antigravity/installed.json")} lockfile.`,
-    );
+    const relLockfile = path.relative(targetDir, lockfilePath);
+    p.log.step(`Initialized ${pc.magenta(relLockfile)} lockfile.`);
     p.outro(
-      pc.green("Antigravity is ready. Run ") +
-        pc.bold(pc.cyan("antigravity add <skill>")) +
+      pc.green("Vibe Skill is ready. Run ") +
+        pc.bold(pc.cyan("vibe-skill add <skill>")) +
         pc.green(" to install skills."),
     );
   }

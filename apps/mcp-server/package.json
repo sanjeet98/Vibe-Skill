@@ -1,8 +1,10 @@
 {
-  "name": "@antigravity/mcp-server",
+  "name": "@vibe-skill/mcp-server",
   "version": "0.1.0",
   "type": "module",
   "bin": {
+    "vibe-skill-mcp": "./dist/index.js",
+    "vibe-skill-mcp-server": "./dist/index.js",
     "antigravity-mcp-server": "./dist/index.js"
   },
   "main": "./dist/index.js",
@@ -14,15 +16,15 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@antigravity/ast-engine": "workspace:*",
-    "@antigravity/infra-core": "workspace:*",
-    "@antigravity/manifest": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.1.0",
+    "@vibe-skill/ast-engine": "workspace:*",
+    "@vibe-skill/infra-core": "workspace:*",
+    "@vibe-skill/manifest": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@antigravity/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
+    "@vibe-skill/tsconfig": "workspace:*",
     "tsup": "^9.0.0",
     "typescript": "^5.8.2",
     "vitest": "^5.0.5"

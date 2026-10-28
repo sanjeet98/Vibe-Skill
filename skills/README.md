@@ -1,6 +1,6 @@
 # Agent Skills Directory
 
-This directory hosts agent skill packages, blueprints, and reusable capability definitions for Antigravity.
+This directory hosts agent skill packages, blueprints, and reusable capability definitions for Vibe Skill.
 
 Each skill package is structured with:
 
