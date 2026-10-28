@@ -5,7 +5,16 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { addCommand } from "../src/commands/add.js";
 import { initCommand } from "../src/commands/init.js";
 import { listCommand } from "../src/commands/list.js";
-import { detectProject } from "../src/utils/project.js";
+import {
+  getLockfilePath,
+  loadLockfile,
+  recordSkill,
+} from "../src/utils/lockfile.js";
+import {
+  detectProject,
+  loadInstalledSkills,
+  recordInstalledSkill,
+} from "../src/utils/project.js";
 
 describe("Vibe Skill CLI End-to-End Tests", () => {
   let tempAppDir: string;
@@ -176,5 +185,88 @@ describe("Vibe Skill CLI End-to-End Tests", () => {
     expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_URL=");
     expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY=");
     expect(envContent).toContain("SUPABASE_SERVICE_ROLE_KEY=");
+  });
+
+  describe("Lockfile Management & Compatibility", () => {
+    it("returns correct lockfile path", () => {
+      const lockPath = getLockfilePath(tempAppDir);
+      expect(lockPath).toBe(
+        path.join(tempAppDir, ".vibe-skill", "installed.json"),
+      );
+    });
+
+    it("returns empty initialized lockfile when file does not exist", () => {
+      const lockfile = loadLockfile(tempAppDir);
+      expect(lockfile.skills).toEqual({});
+      expect(lockfile.installedSkills).toEqual({});
+      expect(lockfile.schemaVersion).toBe("1.0.0");
+    });
+
+    it("records a skill and maintains both skills and installedSkills fields", () => {
+      recordSkill(tempAppDir, {
+        id: "test-skill",
+        name: "Test Skill",
+        version: "1.0.0",
+        installedAt: "2026-10-28T18:00:00.000Z",
+        filesCopied: ["src/test.ts"],
+        injectionsCount: 2,
+      });
+
+      const lockfilePath = getLockfilePath(tempAppDir);
+      expect(fs.existsSync(lockfilePath)).toBe(true);
+
+      const parsed = JSON.parse(fs.readFileSync(lockfilePath, "utf8"));
+      expect(parsed.skills["test-skill"]).toBeDefined();
+      expect(parsed.skills["test-skill"].name).toBe("Test Skill");
+      expect(parsed.skills["test-skill"].filesCopied).toEqual(["src/test.ts"]);
+      expect(parsed.skills["test-skill"].injectionsCount).toBe(2);
+      expect(parsed.skills["test-skill"].injectionsApplied).toBe(2);
+      expect(parsed.installedSkills["test-skill"]).toEqual(
+        parsed.skills["test-skill"],
+      );
+
+      // Verify loaded lockfile matches
+      const loaded = loadLockfile(tempAppDir);
+      expect(loaded.skills["test-skill"].id).toBe("test-skill");
+      expect(loaded.installedSkills?.["test-skill"].id).toBe("test-skill");
+    });
+
+    it("supports loadInstalledSkills and recordInstalledSkill aliases from project.ts", () => {
+      recordInstalledSkill(tempAppDir, {
+        id: "alias-skill",
+        name: "Alias Skill",
+        version: "2.0.0",
+        installedAt: "2026-10-28T18:30:00.000Z",
+        injectionsApplied: 3,
+      });
+
+      const loaded = loadInstalledSkills(tempAppDir);
+      expect(loaded.skills["alias-skill"]).toBeDefined();
+      expect(loaded.skills["alias-skill"].injectionsCount).toBe(3);
+    });
+
+    it("handles legacy lockfile format containing only installedSkills gracefully", () => {
+      const lockfilePath = getLockfilePath(tempAppDir);
+      fs.mkdirSync(path.dirname(lockfilePath), { recursive: true });
+      fs.writeFileSync(
+        lockfilePath,
+        JSON.stringify({
+          version: "1.0.0",
+          installedSkills: {
+            "legacy-skill": {
+              id: "legacy-skill",
+              version: "1.0.0",
+              installedAt: "2026-10-28T12:00:00.000Z",
+            },
+          },
+        }),
+        "utf8",
+      );
+
+      const loaded = loadLockfile(tempAppDir);
+      expect(loaded.skills["legacy-skill"]).toBeDefined();
+      expect(loaded.skills["legacy-skill"].id).toBe("legacy-skill");
+      expect(loaded.installedSkills?.["legacy-skill"].id).toBe("legacy-skill");
+    });
   });
 });

@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workspace Lockfile Management & CLI Enhancements (`@vibe-skill/cli`)**:
+  - Implemented modular lockfile utilities in `apps/cli/src/utils/lockfile.ts` with `loadLockfile`, `recordSkill`, and `getLockfilePath` supporting `.vibe-skill/installed.json`.
+  - Added full dual-compatibility for `.skills` and `.installedSkills` schemas and aliases in `apps/cli/src/utils/project.ts`.
+  - Extended CLI test suite (`apps/cli/tests/cli.test.ts`) with dedicated lockfile unit tests verifying creation, schema compatibility, and normalized injection tracking (all 11 CLI tests passing).
+  - Hardened `apps/cli/src/commands/list.ts` to strictly handle nullable skills collections and fallback names under strict TypeScript checking.
 - **Deterministic AST Engine Enhancements (`@vibe-skill/ast-engine`)**:
   - Implemented `injectNamedImport` returning boolean change flags.
   - Implemented `injectStarExport` for idempotent barrel exports.

@@ -21,7 +21,8 @@ export function listCommand(options: ListOptions = {}): {
   }
 
   const lockfile = loadInstalledSkills(targetDir);
-  const skillsList = Object.values(lockfile.installedSkills);
+  const skillsMap = lockfile.skills || lockfile.installedSkills || {};
+  const skillsList = Object.values(skillsMap);
 
   if (skillsList.length === 0) {
     if (!isSilent) {
@@ -42,7 +43,7 @@ export function listCommand(options: ListOptions = {}): {
 
     skillsList.forEach((skill, index) => {
       const num = pc.dim(`${index + 1}.`);
-      const name = pc.bold(skill.name);
+      const name = pc.bold(skill.name || skill.id);
       const id = pc.cyan(`(${skill.id}@${skill.version})`);
       const date = pc.dim(
         `installed ${new Date(skill.installedAt).toLocaleDateString()}`,

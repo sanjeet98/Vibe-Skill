@@ -13,19 +13,18 @@ export interface ProjectInfo {
   packageManager: "pnpm" | "npm" | "yarn" | "bun";
 }
 
-export interface InstalledSkillRecord {
-  id: string;
-  name: string;
-  version: string;
-  installedAt: string;
-  source: string;
-  injectionsCount: number;
-}
-
-export interface InstalledLockfile {
-  schemaVersion: string;
-  installedSkills: Record<string, InstalledSkillRecord>;
-}
+export {
+  type InstalledSkillRecord,
+  type InstalledLockfile,
+  type VibeSkillLockfile,
+  type AntigravityLockfile,
+  getInstalledLockfilePath,
+  getLockfilePath,
+  loadInstalledSkills,
+  loadLockfile,
+  recordInstalledSkill,
+  recordSkill,
+} from "./lockfile.js";
 
 /**
  * Detects project configuration, framework, language, and router in target directory.
@@ -126,53 +125,4 @@ export function detectProject(targetDir: string = process.cwd()): ProjectInfo {
     hasGit,
     packageManager,
   };
-}
-
-/**
- * Returns path to `.vibe-skill/installed.json`.
- */
-export function getInstalledLockfilePath(projectRoot: string): string {
-  return path.join(projectRoot, ".vibe-skill", "installed.json");
-}
-
-/**
- * Loads the installed skills lockfile, or returns empty state.
- */
-export function loadInstalledSkills(projectRoot: string): InstalledLockfile {
-  const filePath = getInstalledLockfilePath(projectRoot);
-  if (!fs.existsSync(filePath)) {
-    return {
-      schemaVersion: "1.0.0",
-      installedSkills: {},
-    };
-  }
-
-  try {
-    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-    return {
-      schemaVersion: data.schemaVersion || "1.0.0",
-      installedSkills: data.installedSkills || {},
-    };
-  } catch {
-    return {
-      schemaVersion: "1.0.0",
-      installedSkills: {},
-    };
-  }
-}
-
-/**
- * Saves a skill record to the installed skills lockfile.
- */
-export function recordInstalledSkill(
-  projectRoot: string,
-  record: InstalledSkillRecord,
-): void {
-  const lockfile = loadInstalledSkills(projectRoot);
-  lockfile.installedSkills[record.id] = record;
-
-  const targetPath = getInstalledLockfilePath(projectRoot);
-  const dir = path.dirname(targetPath);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(targetPath, JSON.stringify(lockfile, null, 2), "utf8");
 }
