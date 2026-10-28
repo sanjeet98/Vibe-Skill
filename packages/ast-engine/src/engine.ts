@@ -26,16 +26,21 @@ export interface FileMutation {
   hasChanged: boolean;
 }
 
-export interface InjectionResult {
-  success: boolean;
-  mutatedFiles: FileMutation[];
-  errors: string[];
-  dryRun: boolean;
+export interface InjectionOptions {
+  dryRun?: boolean;
+  prettierConfig?: prettier.Options;
+  prettierOptions?: prettier.Options;
 }
 
-export interface ApplyInjectionsOptions {
-  dryRun?: boolean;
-  prettierOptions?: prettier.Options;
+export type ApplyInjectionsOptions = InjectionOptions;
+
+export interface InjectionResult {
+  success: boolean;
+  modifiedFiles: string[];
+  skippedFiles: string[];
+  errors: string[];
+  mutatedFiles: FileMutation[];
+  dryRun: boolean;
 }
 
 interface FileBackup {
@@ -72,20 +77,22 @@ export function validateSourceFileSyntax(
 /**
  * Orchestrator engine executing AST injections on TypeScript / TSX files.
  */
-export class ASTEngine {
-  constructor(private readonly defaultOptions: ApplyInjectionsOptions = {}) {}
+export class AstEngine {
+  constructor(private readonly defaultOptions: InjectionOptions = {}) {}
 
   async apply(
     projectRoot: string,
     injections: SkillInjection[],
-    options?: ApplyInjectionsOptions,
+    options?: InjectionOptions,
   ): Promise<InjectionResult> {
-    return applyInjections(projectRoot, injections, {
+    return applySkillInjections(projectRoot, injections, {
       ...this.defaultOptions,
       ...options,
     });
   }
 }
+
+export const ASTEngine = AstEngine;
 
 /**
  * Applies a list of AST injections across target files in a project.
@@ -97,10 +104,10 @@ export class ASTEngine {
  * - Rollback mechanism: if any injection or syntax check fails, all touched files are restored.
  * - Dry-run mode: returns the computed mutations without writing to disk.
  */
-export async function applyInjections(
+export async function applySkillInjections(
   projectRoot: string,
   injections: SkillInjection[],
-  options?: ApplyInjectionsOptions,
+  options?: InjectionOptions,
 ): Promise<InjectionResult> {
   const isDryRun = Boolean(options?.dryRun);
   const backups = new Map<string, FileBackup>();
@@ -223,6 +230,7 @@ export async function applyInjections(
           filepath: fullPath,
           parser: isTypeScript ? "typescript" : undefined,
           singleQuote: true,
+          ...options?.prettierConfig,
           ...options?.prettierOptions,
         });
       } catch (prettierError) {
@@ -252,8 +260,18 @@ export async function applyInjections(
       }
     }
 
+    const modifiedFiles = mutations
+      .filter((m) => m.hasChanged)
+      .map((m) => m.filePath);
+
+    const skippedFiles = mutations
+      .filter((m) => !m.hasChanged)
+      .map((m) => m.filePath);
+
     return {
       success: true,
+      modifiedFiles,
+      skippedFiles,
       mutatedFiles: mutations,
       errors: [],
       dryRun: isDryRun,
@@ -274,9 +292,13 @@ export async function applyInjections(
 
     return {
       success: false,
+      modifiedFiles: [],
+      skippedFiles: [],
       mutatedFiles: [],
       errors: [(error as Error).message],
       dryRun: isDryRun,
     };
   }
 }
+
+export const applyInjections = applySkillInjections;

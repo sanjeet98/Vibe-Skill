@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Deterministic AST Engine Enhancements (`@vibe-skill/ast-engine`)**:
+  - Implemented `injectNamedImport` returning boolean change flags.
+  - Implemented `injectStarExport` for idempotent barrel exports.
+  - Added `applySkillInjections` and `AstEngine` orchestrator returning categorized `modifiedFiles` and `skippedFiles`.
+  - Configured dual CJS/ESM distribution with TypeScript declaration maps using `tsup`.
 - **Manifest Specification Enhancements (`@vibe-skill/manifest`)**:
   - Added screaming snake case validation (`/^[A-Z0-9_]+$/`) for environment variable keys.
   - Added `astro` framework, `javascript` language, `none` router, and optional `node` runtime constraints to `CompatibilityConfigSchema`.

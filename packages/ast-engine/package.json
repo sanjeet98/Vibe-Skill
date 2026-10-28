@@ -2,22 +2,25 @@
   "name": "@vibe-skill/ast-engine",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "lint": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@vibe-skill/manifest": "workspace:*",
@@ -25,8 +28,9 @@
     "ts-morph": "^28.0.0"
   },
   "devDependencies": {
-    "@vibe-skill/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
+    "@vibe-skill/tsconfig": "workspace:*",
+    "tsup": "^9.0.0",
     "typescript": "^5.8.2",
     "vitest": "^5.0.5"
   }

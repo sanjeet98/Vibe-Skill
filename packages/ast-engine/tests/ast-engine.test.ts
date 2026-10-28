@@ -5,11 +5,15 @@ import { Project } from "ts-morph";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   applyInjections,
+  applySkillInjections,
   ASTEngine,
+  AstEngine,
   injectImport,
   injectJsxWrapper,
   injectNamedExport,
+  injectNamedImport,
   injectReExport,
+  injectStarExport,
   type SkillInjection,
 } from "../src/index.js";
 
@@ -89,6 +93,29 @@ export default function Layout() {
       expect(useClientIndex).toBeGreaterThan(-1);
       expect(importIndex).toBeGreaterThan(useClientIndex);
       expect(text).toContain("/**\n * Main Layout component\n */");
+    });
+
+    it("should provide injectNamedImport returning boolean changed", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sf = project.createSourceFile("named.ts", "");
+
+      const changed1 = injectNamedImport(
+        sf,
+        "AuthProvider",
+        "@/components/auth",
+      );
+      expect(changed1).toBe(true);
+
+      const changed2 = injectNamedImport(
+        sf,
+        "AuthProvider",
+        "@/components/auth",
+      );
+      expect(changed2).toBe(false);
+
+      expect(sf.getFullText()).toContain(
+        'import { AuthProvider } from "@/components/auth";',
+      );
     });
   });
 
@@ -217,6 +244,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       const text = sf.getFullText();
       expect(text).toContain("auth");
       expect(text).toContain("currentUser");
+    });
+
+    it("should provide injectStarExport returning boolean changed", () => {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sf = project.createSourceFile(
+        "barrel.ts",
+        "export * from './first';\n",
+      );
+
+      const changed1 = injectStarExport(sf, "./second");
+      expect(changed1).toBe(true);
+
+      const changed2 = injectStarExport(sf, "./second");
+      expect(changed2).toBe(false);
+
+      expect(sf.getFullText()).toContain('export * from "./second";');
     });
   });
 
@@ -361,6 +404,43 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       expect(result.mutatedFiles[0].modifiedContent).toContain(
         "<Provider>{children}</Provider>",
       );
+    });
+
+    it("should report modifiedFiles and skippedFiles via applySkillInjections", async () => {
+      const layoutPath = path.join(tempDir, "layout.tsx");
+      fs.writeFileSync(
+        layoutPath,
+        `export default function Layout({ children }: any) { return <div>{children}</div>; }`,
+        "utf8",
+      );
+
+      // Pass 1: should modify file
+      const res1 = await applySkillInjections(tempDir, [
+        {
+          type: "jsx_wrapper",
+          targetFile: "layout.tsx",
+          import: { identifier: "Provider", module: "my-lib" },
+          wrapperComponent: "Provider",
+        },
+      ]);
+
+      expect(res1.success).toBe(true);
+      expect(res1.modifiedFiles).toHaveLength(1);
+      expect(res1.skippedFiles).toHaveLength(0);
+
+      // Pass 2: idempotent run should skip file
+      const res2 = await applySkillInjections(tempDir, [
+        {
+          type: "jsx_wrapper",
+          targetFile: "layout.tsx",
+          import: { identifier: "Provider", module: "my-lib" },
+          wrapperComponent: "Provider",
+        },
+      ]);
+
+      expect(res2.success).toBe(true);
+      expect(res2.modifiedFiles).toHaveLength(0);
+      expect(res2.skippedFiles).toHaveLength(1);
     });
   });
 });

@@ -92,3 +92,19 @@ export function injectImport(
 
   return { changed: true, isNewImport: true };
 }
+
+/**
+ * Injects a named import from a module into a source file cleanly and idempotently.
+ * Returns boolean true if changes were made, false otherwise.
+ *
+ * @param sourceFile - Target ts-morph SourceFile
+ * @param identifier - The named symbol to import (e.g., 'ClerkProvider')
+ * @param moduleSpecifier - The module package or path (e.g., '@clerk/nextjs')
+ */
+export function injectNamedImport(
+  sourceFile: SourceFile,
+  identifier: string,
+  moduleSpecifier: string,
+): boolean {
+  return injectImport(sourceFile, moduleSpecifier, identifier).changed;
+}
