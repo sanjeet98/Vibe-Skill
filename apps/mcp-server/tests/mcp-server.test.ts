@@ -249,5 +249,55 @@ describe("Vibe Skill MCP Server & Programmatic Tools", () => {
       expect(lockData.installedSkills["auth-clerk-nextjs"]).toBeDefined();
       expect(lockData.skills["auth-clerk-nextjs"]).toBeDefined();
     });
+
+    it("executes install_skill for canonical auth-supabase-rbac blueprint end-to-end", async () => {
+      const response = await handleInstallSkill(
+        tempAppDir,
+        "auth-supabase-rbac",
+        {
+          skipDependencies: true,
+        },
+      );
+
+      expect(response.success).toBe(true);
+      expect(response.skillId).toBe("auth-supabase-rbac");
+      expect(response.filesCopied).toContain(
+        "src/components/auth-provider.tsx",
+      );
+      expect(response.filesCopied).toContain("src/lib/supabase/client.ts");
+      expect(response.filesCopied).toContain("src/lib/supabase/server.ts");
+      expect(response.filesCopied).toContain("supabase/migrations/roles.sql");
+
+      // Verify AST layout patching
+      const layoutContent = fs.readFileSync(
+        path.join(tempAppDir, "src/app/layout.tsx"),
+        "utf8",
+      );
+      expect(layoutContent).toContain(
+        "import { AuthProvider } from '@/components/auth-provider';",
+      );
+      expect(layoutContent).toContain(
+        '<body className="antialiased">\n        <AuthProvider>{children}</AuthProvider>\n      </body>',
+      );
+
+      // Verify .env.local keys
+      const envContent = fs.readFileSync(
+        path.join(tempAppDir, ".env.local"),
+        "utf8",
+      );
+      expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_URL=");
+      expect(envContent).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY=");
+      expect(envContent).toContain("SUPABASE_SERVICE_ROLE_KEY=");
+
+      // Verify lockfile entry
+      const lockfilePath = path.join(
+        tempAppDir,
+        ".vibe-skill",
+        "installed.json",
+      );
+      const lockData = JSON.parse(fs.readFileSync(lockfilePath, "utf8"));
+      expect(lockData.installedSkills["auth-supabase-rbac"]).toBeDefined();
+      expect(lockData.skills["auth-supabase-rbac"]).toBeDefined();
+    });
   });
 });

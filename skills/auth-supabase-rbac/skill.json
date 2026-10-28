@@ -15,6 +15,16 @@
       "@supabase/ssr": "^0.5.2"
     }
   },
+  "database": {
+    "orm": "none",
+    "migrationCommand": "supabase db push",
+    "schemaFiles": [
+      {
+        "source": "template/schema/roles.sql",
+        "target": "supabase/migrations/roles.sql"
+      }
+    ]
+  },
   "env": [
     {
       "key": "NEXT_PUBLIC_SUPABASE_URL",

@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Canonical Skill: Supabase Authentication & RBAC (`skills/auth-supabase-rbac`)**:
+  - Implemented production-ready reference skill package for Next.js App Router applications.
+  - Manifest (`skill.json`): Configured with `@supabase/supabase-js`, `@supabase/ssr`, environment variables, declarative database schema migrations (`roles.sql`), JSX root wrapping, and middleware session update chain.
+  - Architecture Rules (`agent/rules.md`): Detailed AI agent guide covering Client Components (`useAuth`), Server Components (`createClient`, `supabase.auth.getUser()`), Server Actions, and Postgres RLS policies.
+  - Template Codebase (`template/`): Implemented `AuthProvider`, typed browser/server/middleware Supabase client factories with `CookieOptions`, and robust SQL schema migrations (`roles.sql`).
+  - Integration Tests: Validated end-to-end scaffolding via both CLI `vibe-skill add` and MCP `install_skill`.
 - **Official Model Context Protocol Server (`@vibe-skill/mcp-server`)**:
   - Implemented registry scanner module (`apps/mcp-server/src/registry.ts`) with `listSkills()`, `getSkill()`, and `getSkillRules()`.
   - Added dual server architecture supporting both high-level `McpServer` and low-level `Server` with `ListToolsRequestSchema` and `CallToolRequestSchema` error handling in `apps/mcp-server/src/server.ts`.
