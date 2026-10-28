@@ -21,8 +21,6 @@ export function getSkillsDirectories(): string[] {
 
   if (process.env.VIBE_SKILLS_PATH) {
     dirs.push(path.resolve(process.env.VIBE_SKILLS_PATH));
-  } else if (process.env.ANTIGRAVITY_SKILLS_PATH) {
-    dirs.push(path.resolve(process.env.ANTIGRAVITY_SKILLS_PATH));
   }
 
   // Check current working directory

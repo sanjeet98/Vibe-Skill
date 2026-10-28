@@ -1,12 +1,12 @@
-# Antigravity: Security Policy & Threat Modeling
+# Vibe Skill: Security Policy & Threat Modeling
 
-> Security policies, threat vectors, secret hygiene, static AST sanitization standards, and vulnerability disclosure protocols for the Antigravity (Vibe Skill) platform.
+> Security policies, threat vectors, secret hygiene, static AST sanitization standards, and vulnerability disclosure protocols for the Vibe Skill platform.
 
 ---
 
 ## 1. Threat Modeling & Attack Vectors
 
-Antigravity operates at the intersection of autonomous AI agents, third-party code packages, and direct local file system mutations. This environment introduces unique security challenges that must be defended against:
+Vibe Skill operates at the intersection of autonomous AI agents, third-party code packages, and direct local file system mutations. This environment introduces unique security challenges that must be defended against:
 
 ```text
 ┌─────────────────────────────────┐
@@ -35,7 +35,7 @@ Antigravity operates at the intersection of autonomous AI agents, third-party co
 
 - **Threat**: Traditional package ecosystems suffer from vulnerabilities where packages execute arbitrary bash scripts during `postinstall`.
 - **Mitigations**:
-  - **No Arbitrary Shell Script Execution**: Antigravity does not execute arbitrary shell scripts from skill manifests. Code modification is performed strictly in-process using `ts-morph` AST syntax manipulation.
+  - **No Arbitrary Shell Script Execution**: Vibe Skill does not execute arbitrary shell scripts from skill manifests. Code modification is performed strictly in-process using `ts-morph` AST syntax manipulation.
   - **Sandboxed Database Migrations**: Schema migrations are placed as inert files (e.g., `supabase/migrations/*.sql`) for review rather than blindly piping raw strings to `psql` or executing un-sanitized SQL.
 
 ### 1.3 Vector 3: Prompt Injection via MCP Inputs
@@ -49,7 +49,7 @@ Antigravity operates at the intersection of autonomous AI agents, third-party co
 
 ## 2. Secret Management & Hygiene
 
-Plain-text secrets in source code repositories represent one of the leading causes of security breaches. Antigravity enforces zero-plaintext-secret rules.
+Plain-text secrets in source code repositories represent one of the leading causes of security breaches. Vibe Skill enforces zero-plaintext-secret rules.
 
 ### 2.1 Rules for Skill Manifests
 
@@ -66,7 +66,7 @@ Plain-text secrets in source code repositories represent one of the leading caus
 
 ### 2.2 Local Environment File Isolation
 
-- All environment variables provisioned by Antigravity are appended exclusively to `.env.local` or `.env`.
+- All environment variables provisioned by Vibe Skill are appended exclusively to `.env.local` or `.env`.
 - `.env.local` and `.env` are strictly included in root `.gitignore`.
 - **Placeholder-Only Appending**: The installer generates empty template entries (`KEY=`) with documentation comments. It **never** prompts the user to enter secrets into plain-text terminal logs or LLM context windows unless securely masked.
 
@@ -101,7 +101,7 @@ We welcome responsible, coordinated disclosure of security vulnerabilities from 
 
 - **Do NOT report security vulnerabilities via public GitHub issues.**
 - Please report potential vulnerabilities privately via:
-  - **Email**: `security@vibe-skill.org` (or `security@antigravity.dev`)
+  - **Email**: `security@vibe-skill.org`
   - **GitHub Security Advisories**: Use the "Report a vulnerability" button on our GitHub repository.
 
 ### 4.2 Required Information

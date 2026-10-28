@@ -257,14 +257,9 @@ export async function handleInstallSkill(
       }
     }
 
-    // 5. Record in .vibe-skill/installed.json (or .antigravity/installed.json if legacy exists)
+    // 5. Record in .vibe-skill/installed.json
     const vibeDir = path.join(resolvedProject, ".vibe-skill");
-    const legacyDir = path.join(resolvedProject, ".antigravity");
-    const lockfilePath =
-      !fs.existsSync(vibeDir) &&
-      fs.existsSync(path.join(legacyDir, "installed.json"))
-        ? path.join(legacyDir, "installed.json")
-        : path.join(vibeDir, "installed.json");
+    const lockfilePath = path.join(vibeDir, "installed.json");
     fs.mkdirSync(path.dirname(lockfilePath), { recursive: true });
 
     let lockData: {

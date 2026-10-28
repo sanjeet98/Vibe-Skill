@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the **Antigravity** (Vibe Skill) platform will be documented in this file.
+All notable changes to the **Vibe Skill** platform will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+
+### Changed
+
+- **Platform Branding & Renaming to "Vibe Skill"**:
+  - Renamed platform and CLI from "Antigravity" to "Vibe Skill" across all documentation files, specifications, architecture diagrams, and operational governance files.
+  - Aligned CLI binary (`vibe-skill`) and MCP server package (`@vibe-skill/mcp-server`), environment variables (`VIBE_SKILLS_PATH`), and lockfile path (`.vibe-skill/installed.json`).
+  - Completely purged legacy references from all pages, codebases, tests, and configuration files.
 
 ### Added
 
@@ -49,10 +56,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added in-memory rollback snapshots restoring pristine code on any compiler diagnostic failure.
   - Created 12 unit and transform tests.
 - **Developer Command-Line Interface (`@vibe-skill/cli`)**:
-  - Built standalone executable binary (`vibe-skill` / `antigravity`) with `Commander` and `tsup`.
-  - Added `antigravity init` command for project environment and framework detection.
-  - Added `antigravity add <skill>` command for atomic AST code injection and template copying.
-  - Added `antigravity list` command for querying `.antigravity/installed.json` lockfiles.
+  - Built standalone executable binary (`vibe-skill`) with `Commander` and `tsup`.
+  - Added `vibe-skill init` command for project environment and framework detection.
+  - Added `vibe-skill add <skill>` command for atomic AST code injection and template copying.
+  - Added `vibe-skill list` command for querying `.vibe-skill/installed.json` lockfiles.
   - Created end-to-end fixture tests against simulated Next.js App Router applications.
 - **Model Context Protocol Server (`@vibe-skill/mcp-server`)**:
   - Built MCP-compliant server using `@modelcontextprotocol/sdk` over `stdio` transport.

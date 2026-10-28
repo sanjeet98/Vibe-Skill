@@ -129,19 +129,10 @@ export function detectProject(targetDir: string = process.cwd()): ProjectInfo {
 }
 
 /**
- * Returns path to `.vibe-skill/installed.json` (or `.antigravity/installed.json` if legacy exists).
+ * Returns path to `.vibe-skill/installed.json`.
  */
 export function getInstalledLockfilePath(projectRoot: string): string {
-  const vibeSkillPath = path.join(projectRoot, ".vibe-skill", "installed.json");
-  const antigravityPath = path.join(
-    projectRoot,
-    ".antigravity",
-    "installed.json",
-  );
-  if (!fs.existsSync(vibeSkillPath) && fs.existsSync(antigravityPath)) {
-    return antigravityPath;
-  }
-  return vibeSkillPath;
+  return path.join(projectRoot, ".vibe-skill", "installed.json");
 }
 
 /**

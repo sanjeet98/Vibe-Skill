@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "vibe-skill": "./dist/index.js",
-    "antigravity": "./dist/index.js"
+    "vibe-skill": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

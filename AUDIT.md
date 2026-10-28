@@ -1,6 +1,6 @@
-# Antigravity: Verification, Quality Auditing, & Compliance Framework
+# Vibe Skill: Verification, Quality Auditing, & Compliance Framework
 
-> Pre-release audit checklists, registry compliance scoring, and automated supply-chain security auditing for the Antigravity (Vibe Skill) platform.
+> Pre-release audit checklists, registry compliance scoring, and automated supply-chain security auditing for the Vibe Skill platform.
 
 ---
 
@@ -23,7 +23,7 @@ Before tagging or releasing any core package (`packages/*`), CLI binary (`apps/c
 
 ## 2. Skill Registry Compliance Scoring
 
-To maintain a secure, high-quality ecosystem, all community and third-party skills submitted to the Antigravity Registry are evaluated against an objective, 100-point compliance rubric:
+To maintain a secure, high-quality ecosystem, all community and third-party skills submitted to the Vibe Skill Registry are evaluated against an objective, 100-point compliance rubric:
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -79,7 +79,7 @@ To maintain a secure, high-quality ecosystem, all community and third-party skil
 
 ## 3. Automated Audit Workflow
 
-Antigravity integrates continuous automated auditing into development and CI pipelines:
+Vibe Skill integrates continuous automated auditing into development and CI pipelines:
 
 ### 3.1 Supply-Chain Vulnerability Scanning
 

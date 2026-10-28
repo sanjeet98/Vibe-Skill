@@ -1,8 +1,8 @@
-# Antigravity: Design Principles & Engineering Philosophy
+# Vibe Skill: Design Principles & Engineering Philosophy
 
 > "Deterministic Code Scaffolding > Probabilistic Code Generation."
 
-This document details the architectural principles, idempotency guarantees, non-destructive mutation models, and zero-trust security postures that govern the Antigravity (Vibe Skill) engine.
+This document details the architectural principles, idempotency guarantees, non-destructive mutation models, and zero-trust security postures that govern the Vibe Skill engine.
 
 ---
 
@@ -12,7 +12,7 @@ This document details the architectural principles, idempotency guarantees, non-
 
 Large Language Models (LLMs) operate on token probabilities rather than semantic syntax graphs. When tasked with modifying an existing codebase, an LLM generates a text stream that predicts what the file _should_ look like. While this works well for greenfield prototypes, it degrades rapidly in established, mission-critical production systems:
 
-| Characteristic             | Probabilistic (Raw LLM Patching)            | Deterministic (Antigravity AST Engine)                     |
+| Characteristic             | Probabilistic (Raw LLM Patching)            | Deterministic (Vibe Skill AST Engine)                      |
 | :------------------------- | :------------------------------------------ | :--------------------------------------------------------- |
 | **Code Representation**    | Unstructured text strings                   | Concrete Syntax Tree (AST) node graph                      |
 | **Import Management**      | Frequently duplicates or collides imports   | Surgically merges identifiers into existing import clauses |
@@ -24,7 +24,7 @@ Large Language Models (LLMs) operate on token probabilities rather than semantic
 
 ### The Separation of Concerns
 
-Antigravity enforces a strict division of responsibility between the reasoning agent and the compiler engine:
+Vibe Skill enforces a strict division of responsibility between the reasoning agent and the compiler engine:
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -37,7 +37,7 @@ Antigravity enforces a strict division of responsibility between the reasoning a
                        │ High-level Intent & Manifest
                        ▼
 ┌──────────────────────────────────────────────┐
-│        Antigravity Engine Responsibility     │
+│        Vibe Skill Engine Responsibility      │
 │  • Parse TypeScript Abstract Syntax Trees    │
 │  • Safely inject providers, middleware, barrels│
 │  • Verify compiler syntax diagnostics       │
@@ -50,7 +50,7 @@ Antigravity enforces a strict division of responsibility between the reasoning a
 
 ## 2. Idempotency Guarantee
 
-A core mandate of Antigravity is that **running a skill installation multiple times must produce the exact same codebase state as running it once**.
+A core mandate of Vibe Skill is that **running a skill installation multiple times must produce the exact same codebase state as running it once**.
 
 ### 2.1 Import Injection Idempotency (`import-injector.ts`)
 
@@ -118,11 +118,11 @@ When skills register new database schema tables (e.g., `src/db/schema/roles.ts` 
 
 ## 3. Non-Destructive Mutation & Rollback Guardrails
 
-Antigravity treats existing user code as immutable except at designated injection points.
+Vibe Skill treats existing user code as immutable except at designated injection points.
 
 ### 3.1 Directive and Comment Preservation
 
-TypeScript/Next.js codebases rely heavily on compiler directives. Replacing files via string replacement often detaches directives from the file root, causing silent build failures. Antigravity:
+TypeScript/Next.js codebases rely heavily on compiler directives. Replacing files via string replacement often detaches directives from the file root, causing silent build failures. Vibe Skill:
 
 - Extracts leading comments and directives (`'use client'`, `'use server'`, `/* eslint-disable */`).
 - Inserts new imports immediately after directives, never before them.
@@ -180,7 +180,7 @@ Every file transformation cycle executed by `@vibe-skill/ast-engine` follows an 
 
 ## 4. Zero-Trust Manifests & Sandboxed Capabilities
 
-Third-party package managers have historically suffered from arbitrary script execution vulnerabilities (e.g., malicious `postinstall` shell hooks). Antigravity enforces a **Zero-Trust Manifest Model**.
+Third-party package managers have historically suffered from arbitrary script execution vulnerabilities (e.g., malicious `postinstall` shell hooks). Vibe Skill enforces a **Zero-Trust Manifest Model**.
 
 ### 4.1 Declarative Specifications Over Executable Code
 

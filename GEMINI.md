@@ -1,6 +1,6 @@
-# Antigravity: Workspace Rules & Operational Invariants
+# Vibe Skill: Workspace Rules & Operational Invariants
 
-> Project rules and operational mandates automatically discovered and enforced across the Antigravity (Vibe Skill) workspace.
+> Project rules and operational mandates automatically discovered and enforced across the Vibe Skill workspace.
 
 ---
 
@@ -26,7 +26,7 @@
 ## 2. Strict Code Quality & Safety Rules
 
 1. **Strict TypeScript Standards**: `noImplicitAny: true`, strict null checks, no `as any`.
-2. **AST Transformation Safety**: Never use raw string search-and-replace for structural code scaffolding; use `@antigravity/ast-engine` or MCP `install_skill`. Preserve all comments, JSDocs, and `'use client'`/`'use server'` directives.
+2. **AST Transformation Safety**: Never use raw string search-and-replace for structural code scaffolding; use `@vibe-skill/ast-engine` or MCP `install_skill`. Preserve all comments, JSDocs, and `'use client'`/`'use server'` directives.
 3. **Prettier Formatting**: All modified files must be formatted with Prettier before saving to disk.
 4. **Idempotency Guarantee**: Repeated execution of skill additions must result in zero subsequent diffs.
 5. **Git Conventions**: Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `style:`).

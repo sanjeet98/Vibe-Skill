@@ -19,9 +19,9 @@ When AI coding agents (Claude, Cursor, Windsurf) are tasked with integrating com
 - **Destructive Overwrites**: Stripping top-of-file directives (`'use client'`, `'use server'`) or removing existing user comments.
 - **Integration Gaps**: Missing database migrations, unconfigured `.env` variables, or mismatched package versions.
 
-### The Antigravity Solution
+### The Vibe Skill Solution
 
-Antigravity replaces brittle text-patching with a **compiler-backed AST scaffolding engine**:
+Vibe Skill replaces brittle text-patching with a **compiler-backed AST scaffolding engine**:
 
 1. **Curated Full-Stack Blueprints**: Production-ready packages containing source templates, database migrations, and agent architectural guidelines (`agent/rules.md`).
 2. **Deterministic AST Codemods**: Surgical, non-destructive transformations (`jsx_wrapper`, `named_export`, `re_export`, `middleware_chain`) powered by `ts-morph` and formatted with Prettier.
@@ -35,7 +35,7 @@ Antigravity replaces brittle text-patching with a **compiler-backed AST scaffold
                  │
                  ▼
 ┌─────────────────────────────────┐
-│       Antigravity Engine        │ ◄── Deterministic AST Scaffolding via skill.json
+│       Vibe Skill Engine         │ ◄── Deterministic AST Scaffolding via skill.json
 ├─────────────────────────────────┤
 │ • Validates framework matrix    │
 │ • Injects imports & providers   │
@@ -58,7 +58,7 @@ The repository is structured as a high-performance monorepo powered by **pnpm wo
 ```text
 .
 ├── apps/
-│   ├── cli/                     # Developer CLI binary (antigravity / vibe-skill)
+│   ├── cli/                     # Developer CLI binary (vibe-skill)
 │   └── mcp-server/              # Model Context Protocol stdio server for AI agents
 ├── packages/
 │   ├── ast-engine/              # Deterministic ts-morph AST code transformers
@@ -117,16 +117,15 @@ pnpm format
 
 ## 4. CLI Usage Showcase
 
-The CLI is available as `antigravity` (with `vibe-skill` as an alias):
+The CLI is available as `vibe-skill`:
 
 ### 4.1 Initialize Project
 
-Detects framework, language, router, and package manager, and initializes the `.antigravity/installed.json` lockfile:
+Detects framework, language, router, and package manager, and initializes the `.vibe-skill/installed.json` lockfile:
 
 ```bash
 # In your target project:
-antigravity init
-# or: vibe-skill init
+vibe-skill init
 ```
 
 ### 4.2 Install a Skill Blueprint
@@ -135,13 +134,13 @@ Validates manifest compatibility, copies template files, performs surgical AST i
 
 ```bash
 # Install canonical reference skill:
-antigravity add skills/auth-supabase-rbac
+vibe-skill add skills/auth-supabase-rbac
 
 # Dry-run mode (simulate mutations without touching disk):
-antigravity add skills/auth-clerk-nextjs --dry-run
+vibe-skill add skills/auth-clerk-nextjs --dry-run
 
 # Non-interactive mode (auto-accept prompts):
-antigravity add skills/auth-supabase-rbac -y --no-install
+vibe-skill add skills/auth-supabase-rbac -y --no-install
 ```
 
 ### 4.3 List Installed Skills
@@ -149,14 +148,14 @@ antigravity add skills/auth-supabase-rbac -y --no-install
 Displays all installed skills recorded in the project lockfile:
 
 ```bash
-antigravity list
+vibe-skill list
 ```
 
 ---
 
 ## 5. Model Context Protocol (MCP) Server Integration
 
-The Antigravity MCP Server allows AI coding assistants (Claude Desktop, Cursor, Claude Code, Windsurf) to discover and install skills programmatically via standard JSON-RPC over `stdio`.
+The Vibe Skill MCP Server allows AI coding assistants (Claude Desktop, Cursor, Claude Code, Windsurf) to discover and install skills programmatically via standard JSON-RPC over `stdio`.
 
 ### 5.1 Claude Desktop Configuration
 
@@ -168,11 +167,11 @@ Add the server entry to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
       "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
       "env": {
-        "ANTIGRAVITY_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
+        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
       }
     }
   }
@@ -186,11 +185,11 @@ Create or edit `.cursor/mcp.json` at the root of your workspace:
 ```json
 {
   "mcpServers": {
-    "antigravity": {
+    "vibe-skill": {
       "command": "node",
-      "args": ["./node_modules/@antigravity/mcp-server/dist/index.js"],
+      "args": ["./node_modules/@vibe-skill/mcp-server/dist/index.js"],
       "env": {
-        "ANTIGRAVITY_SKILLS_PATH": "./skills"
+        "VIBE_SKILLS_PATH": "./skills"
       }
     }
   }
@@ -207,7 +206,7 @@ Create or edit `.cursor/mcp.json` at the root of your workspace:
 
 ## 6. Skill Authoring & Contribution
 
-Every Antigravity skill package resides in `skills/<skill-id>` and requires:
+Every Vibe Skill package resides in `skills/<skill-id>` and requires:
 
 ```text
 skills/<skill-id>/

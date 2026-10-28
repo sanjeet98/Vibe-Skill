@@ -1,12 +1,12 @@
-# Antigravity: Testing Strategy & Verification Architecture
+# Vibe Skill: Testing Strategy & Verification Architecture
 
-> Comprehensive testing philosophy, hierarchy, fixture methodologies, and CI/CD execution guidelines for the Antigravity (Vibe Skill) platform.
+> Comprehensive testing philosophy, hierarchy, fixture methodologies, and CI/CD execution guidelines for the Vibe Skill platform.
 
 ---
 
 ## 1. Testing Philosophy & Hierarchy
 
-Antigravity operates on user codebases. A single defect could break application compilation or corrupt developer files. Therefore, our testing pyramid is designed around multi-tiered verification with heavy emphasis on deterministic AST fixture testing:
+Vibe Skill operates on user codebases. A single defect could break application compilation or corrupt developer files. Therefore, our testing pyramid is designed around multi-tiered verification with heavy emphasis on deterministic AST fixture testing:
 
 ```text
                ┌─────────────────────────────┐

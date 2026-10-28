@@ -1,6 +1,6 @@
-# Antigravity: Architecture & System Overview
+# Vibe Skill: Architecture & System Overview
 
-> **Antigravity** (Vibe Skill) is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges high-level AI agent reasoning ("vibe-coding") with deterministic, compiler-verified codebase transformations.
+> **Vibe Skill** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges high-level AI agent reasoning ("vibe-coding") with deterministic, compiler-verified codebase transformations.
 
 ---
 
@@ -15,9 +15,9 @@ Modern AI coding agents (Claude, Cursor, Windsurf, Copilot Workspace) excel at h
 3. **Destructive Text Rewrites**: Naive string search-and-replace often strips user comments, drops top-of-file directives (such as `'use client'` or `'use server'`), and formats files inconsistently.
 4. **Integration Fragmentation**: An agent may generate application code but forget database migrations, fail to configure required environment variables, or install mismatched dependency versions.
 
-### The Antigravity Bridge
+### The Vibe Skill Bridge
 
-Antigravity solves this problem by decoupling **high-level agent intent** from **low-level code synthesis**:
+Vibe Skill solves this problem by decoupling **high-level agent intent** from **low-level code synthesis**:
 
 ```
 ┌─────────────────────────────────┐
@@ -26,7 +26,7 @@ Antigravity solves this problem by decoupling **high-level agent intent** from *
                  │
                  ▼
 ┌─────────────────────────────────┐
-│     Antigravity Platform        │ ◄── Enforces deterministic rules via skill.json
+│       Vibe Skill Platform       │ ◄── Enforces deterministic rules via skill.json
 ├─────────────────────────────────┤
 │ • Validates compatibility       │
 │ • Mutates syntax trees safely   │
@@ -51,7 +51,7 @@ The platform is structured as a modular TypeScript monorepo managed with **pnpm 
 ```text
 .
 ├── apps/
-│   ├── cli/                     # @vibe-skill/cli (binary: vibe-skill / antigravity)
+│   ├── cli/                     # @vibe-skill/cli (binary: vibe-skill)
 │   └── mcp-server/              # @vibe-skill/mcp-server (stdio Model Context Protocol)
 ├── packages/
 │   ├── ast-engine/              # @vibe-skill/ast-engine (ts-morph AST code mutators)
@@ -70,7 +70,7 @@ The platform is structured as a modular TypeScript monorepo managed with **pnpm 
 
 | Package / Application     | Scope / Purpose                         | Key Responsibilities                                                                                                                                                                                                                                                                                                                               |
 | :------------------------ | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`apps/cli`**            | Developer Experience & Local Automation | • Implements the `vibe-skill` CLI (aliased to `antigravity`).<br/>• Commands: `init` (detect environment), `add` (install skill), `list` (show installed skills).<br/>• Prompts human developers for required environment variables with `@clack/prompts`.<br/>• Automatically runs package managers (`pnpm`, `npm`, `yarn`, `bun`).               |
+| **`apps/cli`**            | Developer Experience & Local Automation | • Implements the `vibe-skill` CLI.<br/>• Commands: `init` (detect environment), `add` (install skill), `list` (show installed skills).<br/>• Prompts human developers for required environment variables with `@clack/prompts`.<br/>• Automatically runs package managers (`pnpm`, `npm`, `yarn`, `bun`).                                          |
 | **`apps/mcp-server`**     | AI Agent Integration                    | • Implements an MCP-compliant server using `@modelcontextprotocol/sdk` over `stdio`.<br/>• Exposes tools: `list_available_skills`, `inspect_skill`, and `install_skill`.<br/>• Allows AI agents (Cursor, Claude Code, Windsurf) to query catalog blueprints and invoke AST injections programmatically.                                            |
 | **`packages/manifest`**   | Specification & Validation              | • Single source of truth for the `skill.json` schema.<br/>• Zod schemas validating kebab-case IDs, SemVer strings, framework compatibility matrices, environment variable definitions, and injection discriminators.<br/>• Exports TypeScript types (`SkillManifest`, `ASTInjection`, `CompatibilityConfig`).                                      |
 | **`packages/ast-engine`** | Deterministic Code Transformation       | • Wraps `ts-morph` to perform atomic, non-destructive TypeScript/TSX transformations.<br/>• Core transformers: `import-injector`, `jsx-wrapper-injector`, `export-reexport-injector`, and `middleware-injector`.<br/>• Features automatic rollback guardrails: on syntax error or diagnostic failure, reverts all mutated files to original state. |

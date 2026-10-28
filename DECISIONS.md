@@ -1,6 +1,6 @@
-# Antigravity: Architecture Decision Records (ADRs)
+# Vibe Skill: Architecture Decision Records (ADRs)
 
-This document records the foundational architectural decisions made for the Antigravity (Vibe Skill) platform. Each record outlines the context, rationale, and consequences of key technical choices.
+This document records the foundational architectural decisions made for the Vibe Skill platform. Each record outlines the context, rationale, and consequences of key technical choices.
 
 ---
 
@@ -17,11 +17,11 @@ This document records the foundational architectural decisions made for the Anti
 
 - **Status:** Accepted
 - **Date:** 2026-10-28
-- **Deciders:** Antigravity Systems Architecture Team
+- **Deciders:** Vibe Skill Systems Architecture Team
 
 ### Context
 
-Antigravity must perform deterministic, non-destructive code modifications on existing TypeScript and TSX files (e.g., adding imports, wrapping root layout components in providers, re-exporting modules in barrel files).
+Vibe Skill must perform deterministic, non-destructive code modifications on existing TypeScript and TSX files (e.g., adding imports, wrapping root layout components in providers, re-exporting modules in barrel files).
 
 We evaluated four candidate approaches:
 
@@ -54,11 +54,11 @@ We chose **`ts-morph`** as the foundational AST manipulation engine for `@vibe-s
 
 - **Status:** Accepted
 - **Date:** 2026-10-28
-- **Deciders:** Antigravity Systems Architecture Team
+- **Deciders:** Vibe Skill Systems Architecture Team
 
 ### Context
 
-Antigravity is composed of multiple interrelated packages and applications: core schemas (`manifest`), the code mutator (`ast-engine`), runtime infrastructure (`infra-core`), user interfaces (`cli`, `mcp-server`), and reference capability blueprints (`skills/`).
+Vibe Skill is composed of multiple interrelated packages and applications: core schemas (`manifest`), the code mutator (`ast-engine`), runtime infrastructure (`infra-core`), user interfaces (`cli`, `mcp-server`), and reference capability blueprints (`skills/`).
 
 We required a monorepo tooling stack that provides:
 
@@ -89,7 +89,7 @@ We adopted **`pnpm` Workspaces** paired with **`Turborepo`** (v2+).
 
 - **Status:** Accepted
 - **Date:** 2026-10-28
-- **Deciders:** Antigravity Systems Architecture Team
+- **Deciders:** Vibe Skill Systems Architecture Team
 
 ### Context
 
@@ -124,11 +124,11 @@ We adopted **`Zod`** as the single source of truth for all manifest schema defin
 
 - **Status:** Accepted
 - **Date:** 2026-10-28
-- **Deciders:** Antigravity Systems Architecture Team
+- **Deciders:** Vibe Skill Systems Architecture Team
 
 ### Context
 
-Antigravity serves two primary user categories:
+Vibe Skill serves two primary user categories:
 
 1. **Human Software Engineers**: Operating in terminal environments, running interactive local commands or CI/CD automated setup scripts.
 2. **AI Coding Agents**: Operating in modern AI-integrated IDEs (Claude Desktop, Cursor, Claude Code, Windsurf) requiring structured JSON-RPC tool-calling interfaces without manual terminal interaction.
@@ -139,7 +139,7 @@ Creating only a CLI would force AI agents to run shell subprocesses, parse noisy
 
 We established a **Dual-Interface Architecture**:
 
-- **`apps/cli` (`vibe-skill` / `antigravity`)**: Provides human-friendly interactive terminal prompts with `@clack/prompts`, colored logs, and automated package manager invocation.
+- **`apps/cli` (`vibe-skill`)**: Provides human-friendly interactive terminal prompts with `@clack/prompts`, colored logs, and automated package manager invocation.
 - **`apps/mcp-server` (`vibe-skill-mcp-server`)**: Exposes native JSON-RPC tools (`list_available_skills`, `inspect_skill`, `install_skill`) over `stdio` via `@modelcontextprotocol/sdk`.
 
 Both interfaces are thin presentation layers that delegate all core logic directly to the shared `@vibe-skill/ast-engine` and `@vibe-skill/manifest` libraries.

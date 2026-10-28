@@ -1,6 +1,6 @@
-# Antigravity: Code Quality, Safety, & Operational Rules
+# Vibe Skill: Code Quality, Safety, & Operational Rules
 
-> Mandatory engineering rules, TypeScript standards, AST transformation invariants, Git conventions, and error handling contracts for the Antigravity codebase.
+> Mandatory engineering rules, TypeScript standards, AST transformation invariants, Git conventions, and error handling contracts for the Vibe Skill codebase.
 
 ---
 
@@ -119,7 +119,7 @@ _Examples:_
 
 ## 4. Error Handling Contracts
 
-Public functions in `@antigravity/manifest`, `@antigravity/ast-engine`, `@antigravity/infra-core`, and all CLI/MCP commands must never throw unhandled exceptions or return untyped errors.
+Public functions in `@vibe-skill/manifest`, `@vibe-skill/ast-engine`, `@vibe-skill/infra-core`, and all CLI/MCP commands must never throw unhandled exceptions or return untyped errors.
 
 ### 4.1 Structured Result Pattern
 

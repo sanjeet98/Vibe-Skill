@@ -68,7 +68,6 @@ export async function runCli(argv = process.argv): Promise<void> {
 if (
   process.argv[1] &&
   (process.argv[1].endsWith("vibe-skill") ||
-    process.argv[1].endsWith("antigravity") ||
     process.argv[1].endsWith("index.js") ||
     process.argv[1].endsWith("index.ts"))
 ) {

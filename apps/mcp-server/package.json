@@ -4,8 +4,7 @@
   "type": "module",
   "bin": {
     "vibe-skill-mcp": "./dist/index.js",
-    "vibe-skill-mcp-server": "./dist/index.js",
-    "antigravity-mcp-server": "./dist/index.js"
+    "vibe-skill-mcp-server": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

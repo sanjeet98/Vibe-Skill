@@ -1,6 +1,6 @@
-# Antigravity: Execution Flows & Lifecycle State Machine
+# Vibe Skill: Execution Flows & Lifecycle State Machine
 
-This document details the operational execution flows of the Antigravity (Vibe Skill) system: the 9-stage **End-to-End Skill Installation Lifecycle** and the **Model Context Protocol (MCP) Agent Interaction Flow**.
+This document details the operational execution flows of the Vibe Skill system: the 9-stage **End-to-End Skill Installation Lifecycle** and the **Model Context Protocol (MCP) Agent Interaction Flow**.
 
 ---
 
@@ -175,7 +175,7 @@ Every skill installation—whether triggered via the developer CLI (`vibe-skill 
 
 ## 2. Model Context Protocol (MCP) Agent Interaction Flow
 
-AI coding assistants (Claude Desktop, Cursor, Claude Code, Windsurf) communicate with the Antigravity platform via standard input/output (`stdio`) using JSON-RPC 2.0.
+AI coding assistants (Claude Desktop, Cursor, Claude Code, Windsurf) communicate with the Vibe Skill platform via standard input/output (`stdio`) using JSON-RPC 2.0.
 
 ### Protocol Sequence Diagram
 

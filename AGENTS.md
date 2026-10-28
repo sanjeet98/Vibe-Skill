@@ -1,12 +1,12 @@
-# Antigravity: Multi-Agent Governance & Operational Protocols
+# Vibe Skill: Multi-Agent Governance & Operational Protocols
 
-> Operational rules, agent taxonomy, tool invocation constraints, and context economics for autonomous AI coding agents interacting with the Antigravity (Vibe Skill) platform.
+> Operational rules, agent taxonomy, tool invocation constraints, and context economics for autonomous AI coding agents interacting with the Vibe Skill platform.
 
 ---
 
 ## 1. Agent Taxonomy & Roles
 
-Antigravity employs a role-segregated multi-agent architecture. By separating high-level intent from AST code manipulation, environment provisioning, and quality verification, the platform prevents hallucinated modifications and non-deterministic regressions.
+Vibe Skill employs a role-segregated multi-agent architecture. By separating high-level intent from AST code manipulation, environment provisioning, and quality verification, the platform prevents hallucinated modifications and non-deterministic regressions.
 
 ```text
                            ┌───────────────────────────────┐
@@ -45,7 +45,7 @@ Antigravity employs a role-segregated multi-agent architecture. By separating hi
   - Preserves leading comments, license headers, and directives (`'use client'`, `'use server'`).
   - Enforces Prettier code formatting after AST mutation.
 - **Permissions & Boundaries**:
-  - **Allowed**: Invoking `@antigravity/ast-engine` or MCP `install_skill`.
+  - **Allowed**: Invoking `@vibe-skill/ast-engine` or MCP `install_skill`.
   - **Forbidden**: Performing raw text search-and-replace on files that have registered AST transformers; dropping unhandled syntax errors.
 
 ### 1.3 Infrastructure Provisioner Agent
@@ -66,7 +66,7 @@ Antigravity employs a role-segregated multi-agent architecture. By separating hi
 - **Responsibilities**:
   - Runs TypeScript syntax audits (`tsc --noEmit`) to verify zero compiler regressions.
   - Executes unit test fixtures and end-to-end smoke tests.
-  - If verification passes, writes the audit record to `.antigravity/installed.json` (or `.vibe-skill/installed.json`).
+  - If verification passes, writes the audit record to `.vibe-skill/installed.json`.
   - If verification fails, immediately triggers an **Atomic Rollback** from in-memory snapshots.
 - **Permissions & Boundaries**:
   - **Allowed**: Executing test runners, lint tools, and rollback commands.
@@ -78,13 +78,13 @@ Antigravity employs a role-segregated multi-agent architecture. By separating hi
 
 To ensure safety and idempotency, AI agents must adhere to strict policies regarding tool usage versus direct file editing:
 
-| Action Scenario                       | Permitted Mechanism                                  | Prohibited Mechanism                                | Rationale                                                                                                                       |
-| :------------------------------------ | :--------------------------------------------------- | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| **Installing a Skill Blueprint**      | MCP `install_skill` or CLI `antigravity add <skill>` | Direct manual file editing or string regex patching | Skills declare atomic AST transformations and migrations that must be executed in a transactional checkpoint.                   |
-| **Injecting Providers / Wrappers**    | `@antigravity/ast-engine` (`jsx_wrapper`)            | String concatenation on `layout.tsx`                | Raw string patching frequently breaks closing JSX tags and strips `'use client'`.                                               |
-| **Updating Barrel Exports**           | `@antigravity/ast-engine` (`re_export`)              | Appending `export *` via text tools                 | AST transformers check for prior exports and preserve alphabetical formatting.                                                  |
-| **Writing Novel Business Logic**      | Direct file creation (`write_file`, `edit_file`)     | N/A (Direct edit required)                          | Writing application-specific components, custom endpoints, or pages not covered by skills is the natural role of generative AI. |
-| **Configuring Environment Variables** | Automated installer appending                        | Overwriting whole `.env` files                      | Preserves existing keys, database URLs, and API tokens while cleanly appending new requirements.                                |
+| Action Scenario                       | Permitted Mechanism                                 | Prohibited Mechanism                                | Rationale                                                                                                                       |
+| :------------------------------------ | :-------------------------------------------------- | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| **Installing a Skill Blueprint**      | MCP `install_skill` or CLI `vibe-skill add <skill>` | Direct manual file editing or string regex patching | Skills declare atomic AST transformations and migrations that must be executed in a transactional checkpoint.                   |
+| **Injecting Providers / Wrappers**    | `@vibe-skill/ast-engine` (`jsx_wrapper`)            | String concatenation on `layout.tsx`                | Raw string patching frequently breaks closing JSX tags and strips `'use client'`.                                               |
+| **Updating Barrel Exports**           | `@vibe-skill/ast-engine` (`re_export`)              | Appending `export *` via text tools                 | AST transformers check for prior exports and preserve alphabetical formatting.                                                  |
+| **Writing Novel Business Logic**      | Direct file creation (`write_file`, `edit_file`)    | N/A (Direct edit required)                          | Writing application-specific components, custom endpoints, or pages not covered by skills is the natural role of generative AI. |
+| **Configuring Environment Variables** | Automated installer appending                       | Overwriting whole `.env` files                      | Preserves existing keys, database URLs, and API tokens while cleanly appending new requirements.                                |
 
 ### Golden Rule of File Modification
 
@@ -94,7 +94,7 @@ To ensure safety and idempotency, AI agents must adhere to strict policies regar
 
 ## 3. Context Economics & Token Budgeting
 
-Large context windows degrade reasoning efficiency and increase latency. Antigravity establishes strict context budgeting protocols:
+Large context windows degrade reasoning efficiency and increase latency. Vibe Skill establishes strict context budgeting protocols:
 
 ### 3.1 Progressive Discovery
 
@@ -139,7 +139,7 @@ Once a skill is successfully installed:
 
 ## 4. Continuous File Currency & Synchronization Mandate
 
-All autonomous AI coding agents interacting with the Antigravity codebase must adhere to the **Continuous Currency Mandate**:
+All autonomous AI coding agents interacting with the Vibe Skill codebase must adhere to the **Continuous Currency Mandate**:
 
 ### 4.1 The Rule
 
