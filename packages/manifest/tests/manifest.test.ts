@@ -1,6 +1,10 @@
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   assertValidManifest,
+  parseManifestFile,
   validateManifest,
   type SkillManifest,
 } from "../src/index.js";
@@ -402,6 +406,121 @@ describe("SkillManifest Schema & Validator", () => {
           result.errors.some((err) => err.startsWith("database.orm:")),
         ).toBe(true);
       }
+    });
+  });
+
+  describe("Environment Variables Validation", () => {
+    it("should reject lowercase env keys like supabase_key", () => {
+      const invalid = {
+        ...sampleValidManifest,
+        env: [
+          {
+            key: "supabase_key",
+            required: true,
+            secret: true,
+          },
+        ],
+      };
+      const result = validateManifest(invalid);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.errors.some((err) => err.startsWith("env.0.key:"))).toBe(
+          true,
+        );
+      }
+    });
+
+    it("should reject env keys with spaces or hyphens", () => {
+      const invalid = {
+        ...sampleValidManifest,
+        env: [
+          {
+            key: "INVALID-KEY",
+            required: true,
+            secret: false,
+          },
+        ],
+      };
+      const result = validateManifest(invalid);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.errors.some((err) => err.startsWith("env.0.key:"))).toBe(
+          true,
+        );
+      }
+    });
+
+    it("should accept valid SCREAMING_SNAKE_CASE env keys", () => {
+      const valid = {
+        ...sampleValidManifest,
+        env: [
+          {
+            key: "DATABASE_URL",
+            required: true,
+            secret: true,
+          },
+          {
+            key: "NEXT_PUBLIC_APP_ID_123",
+            required: false,
+            secret: false,
+          },
+        ],
+      };
+      const result = validateManifest(valid);
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe("parseManifestFile Loader", () => {
+    it("should successfully read and validate a valid manifest JSON file", async () => {
+      const tmpDir = await fs.promises.mkdtemp(
+        path.join(os.tmpdir(), "manifest-test-"),
+      );
+      const manifestPath = path.join(tmpDir, "skill.json");
+      await fs.promises.writeFile(
+        manifestPath,
+        JSON.stringify(sampleValidManifest),
+        "utf-8",
+      );
+
+      const result = await parseManifestFile(manifestPath);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(sampleValidManifest.id);
+      }
+
+      await fs.promises.rm(tmpDir, { recursive: true, force: true });
+    });
+
+    it("should gracefully handle a non-existent file", async () => {
+      const fakePath = path.join(os.tmpdir(), "non-existent-manifest.json");
+      const result = await parseManifestFile(fakePath);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.errors[0]).toContain("Manifest file not found");
+      }
+    });
+
+    it("should gracefully handle invalid JSON syntax in manifest file", async () => {
+      const tmpDir = await fs.promises.mkdtemp(
+        path.join(os.tmpdir(), "manifest-test-syntax-"),
+      );
+      const manifestPath = path.join(tmpDir, "skill.json");
+      await fs.promises.writeFile(
+        manifestPath,
+        "{ invalid json syntax ...",
+        "utf-8",
+      );
+
+      const result = await parseManifestFile(manifestPath);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.errors[0]).toContain(
+          "JSON syntax error in manifest file",
+        );
+      }
+
+      await fs.promises.rm(tmpDir, { recursive: true, force: true });
     });
   });
 

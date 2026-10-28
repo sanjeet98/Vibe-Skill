@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Manifest Specification Enhancements (`@vibe-skill/manifest`)**:
+  - Added screaming snake case validation (`/^[A-Z0-9_]+$/`) for environment variable keys.
+  - Added `astro` framework, `javascript` language, `none` router, and optional `node` runtime constraints to `CompatibilityConfigSchema`.
+  - Added `none` ORM support to `DatabaseConfigSchema`.
+  - Added `parseManifestFile` asynchronous file loader handling missing files and malformed JSON syntax gracefully.
+  - Added dual CJS/ESM bundling with `.d.ts` via `tsup`.
 - **Developer Tooling & Pre-Flight Git Hooks**:
   - Configured Husky v9 git hooks for `commit-msg` (enforcing Conventional Commits via `@commitlint/cli` and `@commitlint/config-conventional`) and `pre-commit` (running `lint-staged`).
   - Added `lint-staged` configuration formatting `*.{ts,tsx,json,md}` with Prettier before commits.

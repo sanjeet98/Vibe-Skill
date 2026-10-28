@@ -8,6 +8,12 @@ import { z } from "zod";
 export const KEBAB_CASE_REGEX = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /**
+ * Regular expression validating screaming snake case identifiers for environment variables.
+ * E.g., "DATABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "NEXT_PUBLIC_API_KEY".
+ */
+export const SCREAMING_SNAKE_CASE_REGEX = /^[A-Z0-9_]+$/;
+
+/**
  * Schema validating semantic version strings.
  */
 export const SemverSchema = z
@@ -30,18 +36,21 @@ export const KebabCaseSchema = z
  * Compatibility matrix for framework, language, and routing system.
  */
 export const CompatibilityConfigSchema = z.object({
-  framework: z.enum(["nextjs", "vite", "remix", "fastapi"], {
-    message: "Framework must be one of: 'nextjs', 'vite', 'remix', 'fastapi'",
+  framework: z.enum(["nextjs", "vite", "remix", "fastapi", "astro"], {
+    message:
+      "Framework must be one of: 'nextjs', 'vite', 'remix', 'fastapi', 'astro'",
   }),
-  language: z.enum(["typescript", "python"], {
-    message: "Language must be one of: 'typescript', 'python'",
+  language: z.enum(["typescript", "javascript", "python"], {
+    message: "Language must be one of: 'typescript', 'javascript', 'python'",
   }),
   router: z
-    .enum(["app-router", "pages"], {
-      message: "Router must be 'app-router', 'pages', or null",
+    .enum(["app-router", "pages-router", "pages", "none"], {
+      message:
+        "Router must be 'app-router', 'pages-router', 'pages', or 'none'",
     })
     .nullable()
     .default(null),
+  node: z.string().optional(),
 });
 
 export type CompatibilityConfig = z.infer<typeof CompatibilityConfigSchema>;
@@ -50,7 +59,7 @@ export type CompatibilityConfig = z.infer<typeof CompatibilityConfigSchema>;
  * NPM dependencies and peer skill dependencies.
  */
 export const DependenciesConfigSchema = z.object({
-  npm: z.record(z.string(), z.string()),
+  npm: z.record(z.string(), z.string()).default({}),
   peerSkills: z
     .record(
       z.string(),
@@ -74,7 +83,13 @@ export type DependenciesConfig = z.infer<typeof DependenciesConfigSchema>;
  * Environment variable specification.
  */
 export const EnvVariableSchema = z.object({
-  key: z.string().min(1, "Environment variable key is required"),
+  key: z
+    .string()
+    .min(1, "Environment variable key is required")
+    .regex(
+      SCREAMING_SNAKE_CASE_REGEX,
+      'Environment variable key must be uppercase screaming snake case (e.g. "DATABASE_URL")',
+    ),
   required: z.boolean(),
   secret: z.boolean(),
   description: z.string().optional(),
@@ -82,6 +97,7 @@ export const EnvVariableSchema = z.object({
 });
 
 export type EnvVariable = z.infer<typeof EnvVariableSchema>;
+export type EnvRequirement = EnvVariable;
 
 /**
  * Database schema files mapping and migrations.
@@ -95,8 +111,8 @@ export const DatabaseSchemaFileSchema = z.object({
 export type DatabaseSchemaFile = z.infer<typeof DatabaseSchemaFileSchema>;
 
 export const DatabaseConfigSchema = z.object({
-  orm: z.enum(["drizzle", "prisma"], {
-    message: "ORM must be either 'drizzle' or 'prisma'",
+  orm: z.enum(["drizzle", "prisma", "none"], {
+    message: "ORM must be either 'drizzle', 'prisma', or 'none'",
   }),
   schemaFiles: z.array(DatabaseSchemaFileSchema),
   migrationCommand: z.string().optional(),
@@ -165,6 +181,7 @@ export const ASTInjectionSchema = z.discriminatedUnion("type", [
 ]);
 
 export type ASTInjection = z.infer<typeof ASTInjectionSchema>;
+export type SkillInjection = ASTInjection;
 
 /**
  * Agent context guidelines and test verification harness.

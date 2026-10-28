@@ -46,15 +46,17 @@ Configures the ecosystem requirements for the target codebase:
 
 ```typescript
 interface CompatibilityConfig {
-  framework: "nextjs" | "vite" | "remix" | "fastapi";
-  language: "typescript" | "python";
-  router: "app-router" | "pages" | null;
+  framework: "nextjs" | "vite" | "remix" | "fastapi" | "astro";
+  language: "typescript" | "javascript" | "python";
+  router: "app-router" | "pages-router" | "pages" | "none" | null;
+  node?: string;
 }
 ```
 
 - `framework`: Supported application framework.
 - `language`: Source language target.
-- `router`: Routing strategy (for Next.js projects; set to `null` if not applicable).
+- `router`: Routing strategy (for Next.js projects; set to `null` or `"none"` if not applicable).
+- `node`: Optional SemVer range constraint for Node.js runtime.
 
 ### 3.2 `dependencies`
 
@@ -98,7 +100,7 @@ interface DatabaseSchemaFile {
 }
 
 interface DatabaseConfig {
-  orm: "drizzle" | "prisma";
+  orm: "drizzle" | "prisma" | "none";
   schemaFiles: DatabaseSchemaFile[];
   migrationCommand?: string;
 }

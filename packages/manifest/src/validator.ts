@@ -1,3 +1,4 @@
+import * as fs from "node:fs";
 import type { z } from "zod";
 import { SkillManifestSchema, type SkillManifest } from "./schema.js";
 
@@ -35,6 +36,46 @@ export function validateManifest(json: unknown): ValidationResult {
     success: false,
     errors: formatZodError(parseResult.error),
   };
+}
+
+/**
+ * Reads a JSON file asynchronously and validates its content against SkillManifestSchema.
+ * Handles file reading errors (e.g. file not found) and JSON parsing errors gracefully.
+ *
+ * @param filePath - Path to skill.json file.
+ * @returns ValidationResult with parsed manifest or structured errors.
+ */
+export async function parseManifestFile(
+  filePath: string,
+): Promise<ValidationResult> {
+  let content: string;
+  try {
+    content = await fs.promises.readFile(filePath, "utf-8");
+  } catch (err) {
+    const error = err as NodeJS.ErrnoException;
+    if (error.code === "ENOENT") {
+      return {
+        success: false,
+        errors: [`Manifest file not found: ${filePath}`],
+      };
+    }
+    return {
+      success: false,
+      errors: [`Failed to read manifest file: ${error.message}`],
+    };
+  }
+
+  let json: unknown;
+  try {
+    json = JSON.parse(content);
+  } catch (err) {
+    return {
+      success: false,
+      errors: [`JSON syntax error in manifest file: ${(err as Error).message}`],
+    };
+  }
+
+  return validateManifest(json);
 }
 
 /**
