@@ -286,10 +286,16 @@ importers:
       "@vibe-skill/manifest":
         specifier: workspace:*
         version: link:../../packages/manifest
+      fs-extra:
+        specifier: ^11.4.1
+        version: 11.4.1
       zod:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      "@types/fs-extra":
+        specifier: ^11.0.4
+        version: 11.0.4
       "@types/node":
         specifier: ^22.13.0
         version: 22.20.5

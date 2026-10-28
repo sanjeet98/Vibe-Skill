@@ -18,6 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Official Model Context Protocol Server (`@vibe-skill/mcp-server`)**:
+  - Implemented registry scanner module (`apps/mcp-server/src/registry.ts`) with `listSkills()`, `getSkill()`, and `getSkillRules()`.
+  - Added dual server architecture supporting both high-level `McpServer` and low-level `Server` with `ListToolsRequestSchema` and `CallToolRequestSchema` error handling in `apps/mcp-server/src/server.ts`.
+  - Implemented `list_available_skills` with optional framework filtering (`nextjs`, `vite`).
+  - Implemented `inspect_skill` returning full manifest specifications and architectural rules markdown.
+  - Implemented `install_skill` supporting `dryRun` simulation, `package.json` prerequisite validation, AST injection, `.env.local` provisioning, and workspace lockfile updating.
+  - Enforced strict stdio protocol cleanliness routing diagnostic and lifecycle messages exclusively to `process.stderr` (`console.error()`).
+  - Added comprehensive test suite with 13 unit tests across registry, tools, dryRun mode, and server initializations (`apps/mcp-server/tests/mcp-server.test.ts`).
+  - Updated agent integration guide (`docs/specs/mcp-configuration.md`) covering Cursor, Claude Desktop, Claude Code, and Windsurf.
 - **Workspace Lockfile Management & CLI Enhancements (`@vibe-skill/cli`)**:
   - Implemented modular lockfile utilities in `apps/cli/src/utils/lockfile.ts` with `loadLockfile`, `recordSkill`, and `getLockfilePath` supporting `.vibe-skill/installed.json`.
   - Added full dual-compatibility for `.skills` and `.installedSkills` schemas and aliases in `apps/cli/src/utils/project.ts`.

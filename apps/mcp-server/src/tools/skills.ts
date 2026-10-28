@@ -3,6 +3,10 @@ import * as path from "node:path";
 import { applyInjections, type SkillInjection } from "@vibe-skill/ast-engine";
 import { getAllAvailableSkills, getSkillById } from "../catalog.js";
 
+export interface ListSkillsOptions {
+  framework?: string;
+}
+
 export interface ListSkillsResponse {
   total: number;
   skills: Array<{
@@ -26,6 +30,11 @@ export interface InspectSkillResponse {
   message?: string;
 }
 
+export interface InstallSkillOptions {
+  dryRun?: boolean;
+  skipDependencies?: boolean;
+}
+
 export interface InstallSkillResponse {
   success: boolean;
   skillId: string;
@@ -36,13 +45,23 @@ export interface InstallSkillResponse {
   dependencies: Record<string, string>;
   followUpGuidance: string;
   errors: string[];
+  dryRun?: boolean;
 }
 
 /**
  * Tool: list_available_skills
  */
-export function handleListAvailableSkills(): ListSkillsResponse {
-  const loaded = getAllAvailableSkills();
+export function handleListAvailableSkills(
+  filter: ListSkillsOptions = {},
+): ListSkillsResponse {
+  let loaded = getAllAvailableSkills();
+
+  if (filter.framework) {
+    const target = filter.framework.trim().toLowerCase();
+    loaded = loaded.filter(
+      (s) => s.manifest.compatibility.framework.toLowerCase() === target,
+    );
+  }
 
   return {
     total: loaded.length,
@@ -92,11 +111,32 @@ export function handleInspectSkill(skillId: string): InspectSkillResponse {
 export async function handleInstallSkill(
   projectPath: string,
   skillId: string,
-  options: { skipDependencies?: boolean } = {},
+  options: InstallSkillOptions = {},
 ): Promise<InstallSkillResponse> {
   const resolvedProject = path.resolve(projectPath);
-  const skill = getSkillById(skillId);
+  const isDryRun = Boolean(options.dryRun);
 
+  // 1. Verify target directory contains package.json
+  const pkgJsonPath = path.join(resolvedProject, "package.json");
+  if (!fs.existsSync(pkgJsonPath)) {
+    return {
+      success: false,
+      skillId,
+      projectPath: resolvedProject,
+      filesCopied: [],
+      astInjectionsApplied: [],
+      envVarsRequired: [],
+      dependencies: {},
+      followUpGuidance: "",
+      errors: [
+        `Target directory "${resolvedProject}" does not contain a package.json file.`,
+      ],
+      dryRun: isDryRun,
+    };
+  }
+
+  // 2. Retrieve skill
+  const skill = getSkillById(skillId);
   if (!skill) {
     return {
       success: false,
@@ -108,6 +148,7 @@ export async function handleInstallSkill(
       dependencies: {},
       followUpGuidance: "",
       errors: [`Skill "${skillId}" not found in available catalog.`],
+      dryRun: isDryRun,
     };
   }
 
@@ -117,15 +158,17 @@ export async function handleInstallSkill(
   const envVarsRequired: string[] = manifest.env.map((e) => e.key);
 
   try {
-    // 1. Copy schema and template files
+    // 3. Copy schema and template files
     if (manifest.database?.schemaFiles) {
       for (const item of manifest.database.schemaFiles) {
         const srcPath = path.resolve(skill.skillDir, item.source);
         const destPath = path.resolve(resolvedProject, item.target);
 
         if (fs.existsSync(srcPath)) {
-          fs.mkdirSync(path.dirname(destPath), { recursive: true });
-          fs.copyFileSync(srcPath, destPath);
+          if (!isDryRun) {
+            fs.mkdirSync(path.dirname(destPath), { recursive: true });
+            fs.copyFileSync(srcPath, destPath);
+          }
           filesCopied.push(item.target);
         }
       }
@@ -171,8 +214,10 @@ export async function handleInstallSkill(
             }
 
             const targetDest = path.join(resolvedProject, targetRel);
-            fs.mkdirSync(path.dirname(targetDest), { recursive: true });
-            fs.copyFileSync(entrySource, targetDest);
+            if (!isDryRun) {
+              fs.mkdirSync(path.dirname(targetDest), { recursive: true });
+              fs.copyFileSync(entrySource, targetDest);
+            }
             filesCopied.push(targetRel);
           }
         }
@@ -181,7 +226,7 @@ export async function handleInstallSkill(
       copyTemplateDir(templateDir, "");
     }
 
-    // 2. Prepare AST injections
+    // 4. Prepare AST injections
     const injectionsToApply: SkillInjection[] = [...manifest.injections];
 
     if (manifest.database?.schemaFiles) {
@@ -203,11 +248,12 @@ export async function handleInstallSkill(
       }
     }
 
-    // 3. Execute AST injections via engine
+    // 5. Execute AST injections via engine
     if (injectionsToApply.length > 0) {
       const astResult = await applyInjections(
         resolvedProject,
         injectionsToApply,
+        { dryRun: isDryRun },
       );
       if (!astResult.success) {
         return {
@@ -220,6 +266,7 @@ export async function handleInstallSkill(
           dependencies: manifest.dependencies.npm || {},
           followUpGuidance: "Rollback triggered due to AST injection failure.",
           errors: astResult.errors,
+          dryRun: isDryRun,
         };
       }
 
@@ -230,7 +277,7 @@ export async function handleInstallSkill(
         });
     }
 
-    // 4. Append environment variables to .env.local
+    // 6. Append environment variables to .env.local
     if (manifest.env && manifest.env.length > 0) {
       const envLocalPath = path.join(resolvedProject, ".env.local");
       const envPath = path.join(resolvedProject, ".env");
@@ -248,7 +295,7 @@ export async function handleInstallSkill(
         return !regex.test(existingContent);
       });
 
-      if (missing.length > 0) {
+      if (missing.length > 0 && !isDryRun) {
         let block = `\n# --- Vibe Skill: ${manifest.name} ---\n`;
         for (const item of missing) {
           block += `# ${item.description || item.key}\n${item.key}=\n`;
@@ -257,45 +304,76 @@ export async function handleInstallSkill(
       }
     }
 
-    // 5. Record in .vibe-skill/installed.json
-    const vibeDir = path.join(resolvedProject, ".vibe-skill");
-    const lockfilePath = path.join(vibeDir, "installed.json");
-    fs.mkdirSync(path.dirname(lockfilePath), { recursive: true });
+    // 7. Record in .vibe-skill/installed.json
+    if (!isDryRun) {
+      const lockDirs = [path.join(resolvedProject, ".vibe-skill")];
+      // Support legacy .antigravity directory if present
+      if (fs.existsSync(path.join(resolvedProject, ".antigravity"))) {
+        lockDirs.push(path.join(resolvedProject, ".antigravity"));
+      }
 
-    let lockData: {
-      schemaVersion: string;
-      installedSkills: Record<string, unknown>;
-    } = {
-      schemaVersion: "1.0.0",
-      installedSkills: {},
-    };
+      for (const baseDir of lockDirs) {
+        const lockfilePath = path.join(baseDir, "installed.json");
+        fs.mkdirSync(baseDir, { recursive: true });
 
-    if (fs.existsSync(lockfilePath)) {
-      try {
-        lockData = JSON.parse(fs.readFileSync(lockfilePath, "utf8"));
-      } catch {
-        // Use default
+        let lockData: {
+          version?: string;
+          schemaVersion: string;
+          skills: Record<string, unknown>;
+          installedSkills: Record<string, unknown>;
+        } = {
+          version: "1.0.0",
+          schemaVersion: "1.0.0",
+          skills: {},
+          installedSkills: {},
+        };
+
+        if (fs.existsSync(lockfilePath)) {
+          try {
+            const raw = JSON.parse(fs.readFileSync(lockfilePath, "utf8"));
+            const existingSkills = raw.skills || raw.installedSkills || {};
+            lockData = {
+              version: raw.version || raw.schemaVersion || "1.0.0",
+              schemaVersion: raw.schemaVersion || raw.version || "1.0.0",
+              skills: existingSkills,
+              installedSkills: existingSkills,
+            };
+          } catch {
+            // Use default
+          }
+        }
+
+        const skillRecord = {
+          id: manifest.id,
+          name: manifest.name,
+          version: manifest.version,
+          installedAt: new Date().toISOString(),
+          source: skill.skillDir,
+          injectionsCount: manifest.injections.length,
+          filesCopied,
+          mutatedFiles: astInjectionsApplied,
+        };
+
+        lockData.skills[manifest.id] = skillRecord;
+        lockData.installedSkills[manifest.id] = skillRecord;
+
+        fs.writeFileSync(
+          lockfilePath,
+          JSON.stringify(lockData, null, 2),
+          "utf8",
+        );
       }
     }
 
-    lockData.installedSkills[manifest.id] = {
-      id: manifest.id,
-      name: manifest.name,
-      version: manifest.version,
-      installedAt: new Date().toISOString(),
-      source: skill.skillDir,
-      injectionsCount: manifest.injections.length,
-    };
-
-    fs.writeFileSync(lockfilePath, JSON.stringify(lockData, null, 2), "utf8");
-
-    // 6. Generate Follow-Up Guidance for the AI Agent
+    // 8. Generate Follow-Up Guidance for the AI Agent
     const npmDeps = Object.entries(manifest.dependencies.npm || {})
       .map(([k, v]) => `${k}@${v}`)
       .join(" ");
 
     const guidanceParts = [
-      `Skill "${manifest.name}" was successfully installed into ${resolvedProject}.`,
+      isDryRun
+        ? `[Dry Run] Skill "${manifest.name}" would be installed into ${resolvedProject}. No changes were written to disk.`
+        : `Skill "${manifest.name}" was successfully installed into ${resolvedProject}.`,
     ];
 
     if (npmDeps && !options.skipDependencies) {
@@ -330,6 +408,7 @@ export async function handleInstallSkill(
       dependencies: manifest.dependencies.npm || {},
       followUpGuidance: guidanceParts.join("\n"),
       errors: [],
+      dryRun: isDryRun,
     };
   } catch (err) {
     return {
@@ -342,6 +421,7 @@ export async function handleInstallSkill(
       dependencies: manifest.dependencies.npm || {},
       followUpGuidance: "Failed to complete skill installation.",
       errors: [(err as Error).message],
+      dryRun: isDryRun,
     };
   }
 }

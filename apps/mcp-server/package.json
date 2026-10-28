@@ -4,7 +4,8 @@
   "type": "module",
   "bin": {
     "vibe-skill-mcp": "./dist/index.js",
-    "vibe-skill-mcp-server": "./dist/index.js"
+    "vibe-skill-mcp-server": "./dist/index.js",
+    "antigravity-mcp": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,9 +20,11 @@
     "@vibe-skill/ast-engine": "workspace:*",
     "@vibe-skill/infra-core": "workspace:*",
     "@vibe-skill/manifest": "workspace:*",
+    "fs-extra": "^11.4.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.13.0",
     "@vibe-skill/tsconfig": "workspace:*",
     "tsup": "^9.0.0",

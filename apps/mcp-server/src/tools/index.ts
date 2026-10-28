@@ -15,10 +15,17 @@ export function registerMcpTools(server: McpServer): void {
   // 1. list_available_skills
   server.tool(
     "list_available_skills",
-    "List all registered Vibe Skill skills available for installation, including framework compatibility and required environment variables.",
-    {},
-    async () => {
-      const result = handleListAvailableSkills();
+    "List all production-ready full-stack skills available in the Vibe Skill registry, including their descriptions, target frameworks, and required environment variables.",
+    {
+      framework: z
+        .string()
+        .optional()
+        .describe(
+          "Optional target framework to filter skills by (e.g. 'nextjs', 'vite')",
+        ),
+    },
+    async ({ framework }) => {
+      const result = handleListAvailableSkills({ framework });
       return {
         content: [
           {
@@ -33,7 +40,7 @@ export function registerMcpTools(server: McpServer): void {
   // 2. inspect_skill
   server.tool(
     "inspect_skill",
-    "Inspect a specific Vibe Skill by ID. Returns the complete skill manifest, schema requirements, and agent architecture rules markdown.",
+    "Inspect full specifications and AI agent integration rules for a specific skill before installation.",
     {
       skillId: z
         .string()
@@ -57,7 +64,7 @@ export function registerMcpTools(server: McpServer): void {
   // 3. install_skill
   server.tool(
     "install_skill",
-    "Programmatically install a Vibe Skill into a target project. Performs deterministic AST code injection, copies database schema files, provisions environment variables, and generates follow-up agent instructions.",
+    "Safely scaffold and inject a full-stack skill into a target project. Performs non-destructive AST merging, schema copying, and environment variable initialization.",
     {
       projectPath: z
         .string()
@@ -68,6 +75,12 @@ export function registerMcpTools(server: McpServer): void {
         .string()
         .describe(
           'Unique identifier of the skill to install (e.g. "auth-clerk-nextjs")',
+        ),
+      dryRun: z
+        .boolean()
+        .optional()
+        .describe(
+          "If true, simulates changes without modifying target files (default: false)",
         ),
       options: z
         .object({
@@ -80,8 +93,11 @@ export function registerMcpTools(server: McpServer): void {
         })
         .optional(),
     },
-    async ({ projectPath, skillId, options }) => {
-      const result = await handleInstallSkill(projectPath, skillId, options);
+    async ({ projectPath, skillId, dryRun, options }) => {
+      const result = await handleInstallSkill(projectPath, skillId, {
+        dryRun: dryRun ?? false,
+        skipDependencies: options?.skipDependencies,
+      });
       return {
         content: [
           {

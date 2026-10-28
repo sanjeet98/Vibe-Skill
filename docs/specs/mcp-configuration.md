@@ -13,15 +13,52 @@ The **Vibe Skill MCP Server** allows AI coding assistants (such as **Claude Desk
 
 The server operates over standard input/output (`stdio`) using JSON-RPC, exposing three primary tools:
 
-1. `list_available_skills`: Returns available skill blueprints and required environment variables.
+1. `list_available_skills`: Returns available skill blueprints, descriptions, and required environment variables, with optional framework filtering.
 2. `inspect_skill`: Provides the complete skill manifest, database schema, and architectural rules markdown.
-3. `install_skill`: Safely performs deterministic AST injections, copies schema templates, and provisions `.env.local` keys.
+3. `install_skill`: Safely performs deterministic AST injections, copies schema templates, provisions `.env.local` keys, and records state into the workspace lockfile.
+
+### Stdio Protocol Cleanliness
+
+In MCP stdio servers, standard output (`process.stdout`) is strictly reserved for JSON-RPC messages. Diagnostic logs, startup notices, and errors are directed strictly to `process.stderr` (`console.error()`).
 
 ---
 
 ## 2. Configuration by Agent Platform
 
-### 2.1 Claude Desktop (`claude_desktop_config.json`)
+### 2.1 Cursor IDE (`.cursor/mcp.json` or Global Settings)
+
+To configure Vibe Skill in Cursor across your team or workspace, create or edit `.cursor/mcp.json` at the root of your project:
+
+```json
+{
+  "mcpServers": {
+    "vibe-skill": {
+      "command": "node",
+      "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
+      "env": {
+        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
+      }
+    }
+  }
+}
+```
+
+Or reference installed workspace dependencies:
+
+```json
+{
+  "mcpServers": {
+    "vibe-skill": {
+      "command": "node",
+      "args": ["./node_modules/@vibe-skill/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+---
+
+### 2.2 Claude Desktop (`claude_desktop_config.json`)
 
 To enable Vibe Skill in Claude Desktop, edit your platform configuration file:
 
@@ -35,16 +72,16 @@ Add the `vibe-skill` entry to `mcpServers`:
   "mcpServers": {
     "vibe-skill": {
       "command": "node",
-      "args": ["/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
+      "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
       "env": {
-        "VIBE_SKILLS_PATH": "/path/to/Vibe-Skill/skills"
+        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
       }
     }
   }
 }
 ```
 
-_Or via global npx / published package:_
+_Or via global npx:_
 
 ```json
 {
@@ -62,39 +99,6 @@ _Or via global npx / published package:_
 
 ---
 
-### 2.2 Cursor IDE (`.cursor/mcp.json`)
-
-To enable Vibe Skill in Cursor across your team or workspace, create or edit `.cursor/mcp.json` at the root of your project:
-
-```json
-{
-  "mcpServers": {
-    "vibe-skill": {
-      "command": "node",
-      "args": ["./node_modules/@vibe-skill/mcp-server/dist/index.js"],
-      "env": {
-        "VIBE_SKILLS_PATH": "./skills"
-      }
-    }
-  }
-}
-```
-
-_Or via local monorepo path:_
-
-```json
-{
-  "mcpServers": {
-    "vibe-skill": {
-      "command": "node",
-      "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"]
-    }
-  }
-}
-```
-
----
-
 ### 2.3 Claude Code CLI
 
 To configure Vibe Skill for the **Claude Code** terminal agent:
@@ -105,7 +109,7 @@ Run the `mcp add` command:
 claude mcp add vibe-skill -- node /absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js
 ```
 
-Or add to your project's `claude.json` / `~/.claude/settings.json`:
+Or add to your project's `claude.json` or `~/.claude/settings.json`:
 
 ```json
 {
@@ -123,13 +127,47 @@ Or add to your project's `claude.json` / `~/.claude/settings.json`:
 
 ---
 
-## 3. Available MCP Tools Reference
+### 2.4 Windsurf IDE (`mcp_config.json`)
+
+To configure Vibe Skill in Windsurf:
+
+- Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "vibe-skill": {
+      "command": "node",
+      "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
+      "env": {
+        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
+      }
+    }
+  }
+}
+```
+
+---
+
+## 3. Environment Variables
+
+The MCP server accepts configuration via environment variables:
+
+| Variable                  | Description                                                     | Default                  |
+| :------------------------ | :-------------------------------------------------------------- | :----------------------- |
+| `VIBE_SKILLS_PATH`        | Path to skills catalog directory containing `skill.json` files. | `<workspaceRoot>/skills` |
+| `ANTIGRAVITY_SKILLS_PATH` | Legacy alias for skills catalog directory.                      | `<workspaceRoot>/skills` |
+
+---
+
+## 4. Available MCP Tools Reference
 
 ### `list_available_skills`
 
 Returns a summary catalog of all registered skills.
 
-- **Parameters:** None
+- **Parameters:**
+  - `framework` (`string`, optional): Filter skills by target framework (e.g. `"nextjs"`, `"vite"`).
 - **Sample Output:**
 
 ```json
@@ -168,7 +206,7 @@ Fetches the full manifest, AST mutation list, and architectural coding rules for
 {
   "found": true,
   "skillId": "auth-clerk-nextjs",
-  "manifest": { ... },
+  "manifest": { "...": "..." },
   "rulesMarkdown": "# Clerk Authentication Architectural Rules\n\n1. Always wrap the root layout..."
 }
 ```
@@ -182,6 +220,7 @@ Executes safe AST code injections and copies schema files into a target project.
 - **Parameters:**
   - `projectPath` (`string`, required): Target project root directory (e.g. `"/Users/developer/my-next-app"`).
   - `skillId` (`string`, required): Identifier of skill to install (e.g. `"auth-clerk-nextjs"`).
+  - `dryRun` (`boolean`, optional, default: `false`): If `true`, simulates modifications without writing changes to disk.
   - `options` (`object`, optional):
     - `skipDependencies` (`boolean`): Skip package installation instructions.
 - **Sample Output:**
@@ -197,21 +236,25 @@ Executes safe AST code injections and copies schema files into a target project.
   "dependencies": {
     "@clerk/nextjs": "^5.0.0"
   },
-  "followUpGuidance": "Skill \"Clerk Authentication for Next.js\" was successfully installed into /Users/developer/my-next-app.\nDependencies: Run 'pnpm add @clerk/nextjs@^5.0.0'...\nEnvironment: Populate required keys in .env.local..."
+  "followUpGuidance": "Skill \"Clerk Authentication for Next.js\" was successfully installed into /Users/developer/my-next-app.\nDependencies: Run 'pnpm add @clerk/nextjs@^5.0.0'...\nEnvironment: Populate required keys in .env.local...",
+  "errors": [],
+  "dryRun": false
 }
 ```
 
 ---
 
-## 4. Verification
+## 5. Verification & Testing
 
-Test the MCP server directly using stdio in your terminal:
+### Direct Execution via Node
 
 ```bash
 node apps/mcp-server/dist/index.js
 ```
 
-Or verify using the official MCP Inspector:
+_(Listening on stdio; logs startup message to `stderr`)_
+
+### Official MCP Inspector
 
 ```bash
 npx @modelcontextprotocol/inspector node apps/mcp-server/dist/index.js
