@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Developer Tooling & Pre-Flight Git Hooks**:
+  - Configured Husky v9 git hooks for `commit-msg` (enforcing Conventional Commits via `@commitlint/cli` and `@commitlint/config-conventional`) and `pre-commit` (running `lint-staged`).
+  - Added `lint-staged` configuration formatting `*.{ts,tsx,json,md}` with Prettier before commits.
+  - Added `@vibe-skill/tsconfig/node.json` extending strict base configuration tailored for Node libraries and CLI.
+  - Enhanced GitHub Actions CI workflow to validate Node 20 across `main` and `develop` branches running `pnpm turbo run lint test build`.
 - **Continuous File Currency & Synchronization Rule**:
   - Established workspace-wide file synchronization invariant ensuring documentation, specifications, schemas, lockfiles, tests, and changelog remain 100% current whenever code changes occur.
   - Added dedicated workspace rule in `.agents/rules/file-currency.md`.
