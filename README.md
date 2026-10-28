@@ -1,10 +1,10 @@
-# Antigravity (Vibe Skill)
+# Vibe Skill
 
 [![CI](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml/badge.svg)](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP Enabled](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 
-> **Antigravity** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges rapid AI agent "vibe-coding" with deterministic, production-grade code synthesis.
+> **Vibe Skill** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges rapid AI agent "vibe-coding" with deterministic, production-grade code synthesis.
 
 ---
 
