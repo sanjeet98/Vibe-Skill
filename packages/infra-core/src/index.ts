@@ -1,9 +1,15 @@
 /**
  * @vibe-skill/infra-core
- * Core infrastructure, registry client, storage, and execution runtime.
+ * Automated cloud resource and database provisioning engine, environment sync, and secret management.
  */
 
 import type { SkillManifest } from "@vibe-skill/manifest";
+
+export * from "./types.js";
+export * from "./env/masker.js";
+export * from "./env/sync.js";
+export * from "./connectors/index.js";
+export * from "./engine.js";
 
 export interface RegistryConfig {
   registryUrl: string;

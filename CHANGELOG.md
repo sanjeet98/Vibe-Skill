@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cloud Resource & Database Provisioning Engine (`@vibe-skill/infra-core`)**:
+  - Implemented `ProviderConnector` architecture and `ConnectorRegistry` for automated third-party cloud resource provisioning.
+  - Implemented `SupabaseConnector` for automated environment variable generation (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) and database schema migration queues.
+  - Implemented `StripeConnector` for payment configuration, test API keys, and automated webhook endpoint/secret management.
+  - Implemented non-destructive `.env.local` synchronizer (`syncEnvFile`) that cleanly appends configuration blocks while strictly preserving existing user keys.
+  - Implemented `SecretMasker` (`maskSecret`, `maskEnv`, `maskLogs`) ensuring zero raw secret leakage in agent traces and CLI logs per `SECURITY.md` and `AGENTS.md`.
+  - Implemented `InfraEngine` orchestrator and `provisionSkillResources` entrypoint supporting full `dryRun` simulation mode.
+  - Added unit and integration test suite with 11 tests across connectors, environment synchronization, secret masking, and engine orchestration (`packages/infra-core/tests/infra-core.test.ts`).
 - **Canonical Skill: Supabase Authentication & RBAC (`skills/auth-supabase-rbac`)**:
   - Implemented production-ready reference skill package for Next.js App Router applications.
   - Manifest (`skill.json`): Configured with `@supabase/supabase-js`, `@supabase/ssr`, environment variables, declarative database schema migrations (`roles.sql`), JSX root wrapping, and middleware session update chain.

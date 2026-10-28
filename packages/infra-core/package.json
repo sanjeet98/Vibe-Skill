@@ -14,17 +14,22 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "lint": "tsc --noEmit",
-    "test": "echo \"@vibe-skill/infra-core: tests placeholder\""
+    "test": "vitest run"
   },
   "dependencies": {
-    "@vibe-skill/manifest": "workspace:*"
+    "@vibe-skill/manifest": "workspace:*",
+    "dotenv": "^18.0.9",
+    "stripe": "^23.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@vibe-skill/tsconfig": "workspace:*",
     "@types/node": "^22.13.0",
-    "typescript": "^5.8.2"
+    "@vibe-skill/tsconfig": "workspace:*",
+    "tsup": "^9.0.0",
+    "typescript": "^5.8.2",
+    "vitest": "^5.0.5"
   }
 }
