@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Platform Branding & Renaming to "Vibe Skill"**:
-  - Renamed platform and CLI from "Antigravity" to "Vibe Skill" across all documentation files, specifications, architecture diagrams, and operational governance files.
+  - Established platform and CLI name as "Vibe Skill" across all documentation files, specifications, architecture diagrams, and operational governance files.
   - Aligned CLI binary (`vibe-skill`) and MCP server package (`@vibe-skill/mcp-server`), environment variables (`VIBE_SKILLS_PATH`), and lockfile path (`.vibe-skill/installed.json`).
   - Completely purged legacy references from all pages, codebases, tests, and configuration files.
 
