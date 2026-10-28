@@ -2,62 +2,75 @@
 
 [![CI](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml/badge.svg)](https://github.com/sanjeet98/Vibe-Skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript: Strict](https://img.shields.io/badge/TypeScript-Strict%205.8-blue.svg)](packages/tsconfig/base.json)
-[![Turborepo](https://img.shields.io/badge/Turborepo-v2.4-black.svg)](https://turbo.build/repo)
+[![MCP Enabled](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 
-> **Antigravity** (Vibe Skill) is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges high-level AI agent reasoning ("vibe-coding") with deterministic, compiler-verified code manipulation.
+> **Antigravity** is an open-source, full-stack agent skills registry and Abstract Syntax Tree (AST) scaffolding engine. It bridges rapid AI agent "vibe-coding" with deterministic, production-grade code synthesis.
 
 ---
 
 ## 1. Project Vision & Value Proposition
 
-### The Problem: Vibe Coding Breaks at Scale
+### The Problem with "Vibe Coding"
 
-AI coding assistants (Claude, Cursor, Windsurf, Copilot) excel at natural-language understanding, algorithmic planning, and boilerplate generation. However, when instructed to inject complex full-stack capabilities (such as Supabase Auth with SSR middleware, Clerk authentication, or Drizzle ORM schemas) into established codebases, text-generating LLMs frequently fail:
+When AI coding agents (Claude, Cursor, Windsurf) are tasked with integrating complex full-stack capabilities (such as Supabase Auth with SSR middleware, Clerk authentication, or Drizzle ORM schemas), standard probabilistic LLM text generation frequently causes:
 
-- **Syntax Corruption**: Missing braces, unclosed JSX elements, or malformed parameter lists.
-- **Import Duplication**: Generating duplicate import statements or conflicting symbols.
-- **Directive Detachment**: Inadvertently stripping `'use client'` or `'use server'` directives during string replacements.
-- **Non-Atomic Breakages**: Leaving the codebase in a half-configured, unbuildable state when an error occurs.
+- **Syntactic Corruption**: Broken JSX tags, missing braces, or invalid imports.
+- **Non-Deterministic Duplication**: Repeated prompt turns duplicate imports, wrap providers redundantly, or collide route handlers.
+- **Destructive Overwrites**: Stripping top-of-file directives (`'use client'`, `'use server'`) or removing existing user comments.
+- **Integration Gaps**: Missing database migrations, unconfigured `.env` variables, or mismatched package versions.
 
 ### The Antigravity Solution
 
-Antigravity enforces a strict separation: **AI agents handle intent and semantic planning; the Antigravity AST Engine handles code compilation and syntax tree mutations**.
+Antigravity replaces brittle text-patching with a **compiler-backed AST scaffolding engine**:
 
-- **Deterministic Code Scaffolding > Probabilistic Code Generation**: Surgical node-level AST insertions instead of blind string replacements.
-- **100% Idempotent**: Running a skill installation repeatedly will never duplicate imports, JSX providers, or barrel re-exports.
-- **Atomic Transactions & Instant Rollback**: Changes are validated against compiler syntax diagnostics before saving; any error triggers an instant revert.
-- **Zero-Trust Declarative Manifests**: Skills declare what they inject via `skill.json` without running unsandboxed arbitrary shell scripts.
-- **Dual Interface**: Native CLI for human developers and CI pipelines; Model Context Protocol (MCP) server for agent IDEs.
+1. **Curated Full-Stack Blueprints**: Production-ready packages containing source templates, database migrations, and agent architectural guidelines (`agent/rules.md`).
+2. **Deterministic AST Codemods**: Surgical, non-destructive transformations (`jsx_wrapper`, `named_export`, `re_export`, `middleware_chain`) powered by `ts-morph` and formatted with Prettier.
+3. **Guaranteed Idempotency & Rollbacks**: Re-running an install produces zero diffs; any syntax error automatically reverts all files from in-memory snapshots.
+4. **Native Agent & Human Interfaces**: Standalone CLI for developers and CI/CD pipelines; Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Windsurf.
+
+```text
+┌─────────────────────────────────┐
+│     AI Agent / Developer        │ ◄── "Add Supabase Auth with RBAC"
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│       Antigravity Engine        │ ◄── Deterministic AST Scaffolding via skill.json
+├─────────────────────────────────┤
+│ • Validates framework matrix    │
+│ • Injects imports & providers   │
+│ • Preserves comments/directives │
+│ • Atomic rollback on error      │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│  Target Production Codebase     │ ◄── 100% syntactically verified & formatted
+└─────────────────────────────────┘
+```
 
 ---
 
-## 2. Monorepo Architecture Overview
+## 2. Monorepo Overview
 
-The repository is organized as a high-performance monorepo powered by **pnpm workspaces** and **Turborepo**:
+The repository is structured as a high-performance monorepo powered by **pnpm workspaces** and **Turborepo**:
 
 ```text
 .
 ├── apps/
-│   ├── cli/                     # @vibe-skill/cli - Human developer CLI (bin: vibe-skill, antigravity)
-│   └── mcp-server/              # @vibe-skill/mcp-server - Model Context Protocol stdio server
+│   ├── cli/                     # Developer CLI binary (antigravity / vibe-skill)
+│   └── mcp-server/              # Model Context Protocol stdio server for AI agents
 ├── packages/
-│   ├── ast-engine/              # @vibe-skill/ast-engine - ts-morph AST codemods & rollback guardrails
-│   ├── infra-core/              # @vibe-skill/infra-core - Registry client, caching, and runtime
-│   ├── manifest/                # @vibe-skill/manifest - Skill specification Zod schemas & validator
-│   └── tsconfig/                # @vibe-skill/tsconfig - Shared strict TypeScript configurations
-├── skills/                      # Canonical reference skill packages & blueprints
-│   ├── auth-clerk-nextjs/       # Clerk Auth App Router integration
+│   ├── ast-engine/              # Deterministic ts-morph AST code transformers
+│   ├── infra-core/              # Registry client, local cache, and execution sandbox
+│   ├── manifest/                # Zod schemas and runtime validator for skill.json
+│   └── tsconfig/                # Strict base TypeScript configuration
+├── skills/                      # Canonical reference skills & capability blueprints
+│   ├── auth-clerk-nextjs/       # Clerk Authentication for Next.js App Router
 │   ├── auth-supabase-rbac/      # Supabase Auth, SSR middleware, & Postgres RBAC
-│   └── db-drizzle-pg/           # Drizzle ORM + Postgres schema & client
-├── docs/                        # Architecture specifications and engineering roadmaps
-├── ARCHITECTURE.md              # System design & component interaction topology
-├── DESIGN.md                    # Core principles, idempotency, & non-destructive mutations
-├── FLOW.md                      # 9-stage installation lifecycle & MCP sequence diagrams
-├── DECISIONS.md                 # Architecture Decision Records (ADRs)
-├── AGENTS.md                    # Multi-agent role taxonomy & tool constraints
-├── RULES.md                     # Strict TypeScript, Git, & error handling standards
-└── MEMORY.md                    # Workspace lockfile & rollback checkpoint ledger
+│   └── db-drizzle-pg/           # Drizzle ORM + PostgreSQL client & schemas
+├── docs/                        # Architecture specs, master roadmap, and ADRs
+└── package.json                 # Root monorepo configuration
 ```
 
 ---
@@ -67,104 +80,87 @@ The repository is organized as a high-performance monorepo powered by **pnpm wor
 ### Prerequisites
 
 - **Node.js**: `>= 20.0.0` (Node 22+ recommended)
-- **pnpm**: `>= 10.0.0` (Enforced via `packageManager: "pnpm@12.15.0"`)
+- **pnpm**: `>= 10.0.0` (v12.15+ bundled)
 
-### Installation & Build
+### Installation
+
+Clone the repository and install all workspace dependencies:
 
 ```bash
-# 1. Clone repository
 git clone https://github.com/sanjeet98/Vibe-Skill.git
 cd Vibe-Skill
-
-# 2. Install dependencies across all workspaces
 pnpm install
-
-# 3. Build all packages and CLI/MCP executables with Turborepo
-pnpm build
 ```
 
-### Development Scripts
+### Build & Development Scripts
 
-| Command             | Action                                                                     |
-| :------------------ | :------------------------------------------------------------------------- |
-| `pnpm build`        | Compiles all packages and standalone binaries using cached Turborepo tasks |
-| `pnpm dev`          | Starts incremental watch mode across all packages                          |
-| `pnpm test`         | Runs complete Vitest test suites (49+ unit & e2e fixture tests)            |
-| `pnpm lint`         | Runs `tsc --noEmit` strict type checking across all 6 workspaces           |
-| `pnpm format`       | Formats all code, markdown, and JSON files using Prettier                  |
-| `pnpm format:check` | Asserts Prettier code formatting compliance in CI                          |
+Workspaces are orchestrated via **Turborepo**:
+
+```bash
+# Build all packages and applications (tsup & tsc)
+pnpm build
+
+# Run incremental watch mode across packages
+pnpm dev
+
+# Run strict type checking across monorepo
+pnpm lint
+
+# Execute all unit and end-to-end fixture test suites (Vitest)
+pnpm test
+
+# Format all code, documentation, and manifests with Prettier
+pnpm format
+```
 
 ---
 
 ## 4. CLI Usage Showcase
 
-The platform ships an interactive developer CLI (`vibe-skill`, aliased to `antigravity`):
+The CLI is available as `antigravity` (with `vibe-skill` as an alias):
+
+### 4.1 Initialize Project
+
+Detects framework, language, router, and package manager, and initializes the `.antigravity/installed.json` lockfile:
 
 ```bash
-# Display help & options
-vibe-skill --help
+# In your target project:
+antigravity init
+# or: vibe-skill init
 ```
 
-### 4.1 Initialize Project (`vibe-skill init`)
+### 4.2 Install a Skill Blueprint
 
-Detects framework, language, router, and package manager, and initializes the workspace lockfile:
+Validates manifest compatibility, copies template files, performs surgical AST injections, appends missing environment keys, and installs npm dependencies:
 
 ```bash
-vibe-skill init
+# Install canonical reference skill:
+antigravity add skills/auth-supabase-rbac
+
+# Dry-run mode (simulate mutations without touching disk):
+antigravity add skills/auth-clerk-nextjs --dry-run
+
+# Non-interactive mode (auto-accept prompts):
+antigravity add skills/auth-supabase-rbac -y --no-install
 ```
 
-```text
-◆  Vibe Skill CLI
-│  Project detected: my-next-app v0.1.0
-│  Framework:       nextjs
-│  Language:        typescript
-│  Router:          app-router
-│  Package Manager: pnpm
-│  Git Repository:  yes
-◇  Initialized .vibe-skill/installed.json lockfile.
-└  Vibe Skill is ready. Run vibe-skill add <skill> to install skills.
-```
+### 4.3 List Installed Skills
 
-### 4.2 Install Skill (`vibe-skill add <skill>`)
-
-Validates compatibility, injects imports and providers via AST, copies schemas, and provisions `.env.local`:
+Displays all installed skills recorded in the project lockfile:
 
 ```bash
-# Install by local path or registry identifier
-vibe-skill add skills/auth-supabase-rbac
-
-# Non-interactive / CI execution
-vibe-skill add skills/auth-clerk-nextjs -y --no-install
-```
-
-### 4.3 List Installed Skills (`vibe-skill list`)
-
-Inspects `.vibe-skill/installed.json` and outputs active capabilities:
-
-```bash
-vibe-skill list
-```
-
-```text
-◆  Vibe Skill Installed Skills
-│  Found 2 installed skill(s):
-│
-◇  1. Supabase Auth with RBAC (auth-supabase-rbac@1.0.0) - installed 10/28/2026
-│     Source: skills/auth-supabase-rbac | Injections: 2
-◇  2. Clerk Auth Integration (auth-clerk-nextjs@1.0.0) - installed 10/28/2026
-│     Source: skills/auth-clerk-nextjs | Injections: 1
-└  Use vibe-skill add <skill> to add more skills.
+antigravity list
 ```
 
 ---
 
 ## 5. Model Context Protocol (MCP) Server Integration
 
-The `@vibe-skill/mcp-server` enables AI coding agents (Claude Desktop, Cursor, Claude Code, Windsurf) to discover, inspect, and install verified skills natively over `stdio`.
+The Antigravity MCP Server allows AI coding assistants (Claude Desktop, Cursor, Claude Code, Windsurf) to discover and install skills programmatically via standard JSON-RPC over `stdio`.
 
 ### 5.1 Claude Desktop Configuration
 
-Add the server entry to your Claude Desktop configuration file:
+Add the server entry to your Claude Desktop config file:
 
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -172,11 +168,11 @@ Add the server entry to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "vibe-skill": {
+    "antigravity": {
       "command": "node",
       "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
       "env": {
-        "VIBE_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
+        "ANTIGRAVITY_SKILLS_PATH": "/absolute/path/to/Vibe-Skill/skills"
       }
     }
   }
@@ -190,77 +186,101 @@ Create or edit `.cursor/mcp.json` at the root of your workspace:
 ```json
 {
   "mcpServers": {
-    "vibe-skill": {
+    "antigravity": {
       "command": "node",
-      "args": ["/absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js"],
+      "args": ["./node_modules/@antigravity/mcp-server/dist/index.js"],
       "env": {
-        "VIBE_SKILLS_PATH": "./skills"
+        "ANTIGRAVITY_SKILLS_PATH": "./skills"
       }
     }
   }
 }
 ```
 
-### 5.3 Claude Code CLI Configuration
+### 5.3 Available MCP Tools
 
-Register via the terminal:
-
-```bash
-claude mcp add vibe-skill -- node /absolute/path/to/Vibe-Skill/apps/mcp-server/dist/index.js
-```
-
-### 5.4 Available MCP Tools
-
-- **`list_available_skills`**: Returns catalog of skills, tags, framework requirements, and required environment variables.
-- **`inspect_skill(skillId)`**: Returns detailed `skill.json` manifest and architectural rules markdown (`agent/rules.md`).
-- **`install_skill(projectPath, skillId, options)`**: Programmatically executes deterministic AST injections, copies schema assets, provisions `.env.local` keys, and returns structured agent guidance.
+- `list_available_skills`: Returns a catalog of all registered skill blueprints, supported frameworks, and required environment variables.
+- `inspect_skill(skillId)`: Returns full `skill.json` manifest and architectural rules markdown (`agent/rules.md`).
+- `install_skill(projectPath, skillId, options)`: Programmatically executes the 9-stage AST injection and file placement pipeline.
 
 ---
 
-## 6. Contribution & Skill Authoring
+## 6. Skill Authoring & Contribution
 
-We welcome community contributions for new agent skills, ORM blueprints, and auth integrations.
-
-### Authoring a New Skill Package
-
-Create a new directory under `skills/<skill-id>/`:
+Every Antigravity skill package resides in `skills/<skill-id>` and requires:
 
 ```text
-skills/my-new-skill/
-├── skill.json                   # Manifest conforming to @vibe-skill/manifest
-├── template/                    # Code templates & components to place
+skills/<skill-id>/
+├── skill.json              # Declarative manifest (Zod validated)
+├── template/               # Components, helpers, and middleware to place
 │   ├── components/
 │   └── lib/
-├── schema/                      # Database migrations or ORM tables (.sql, .ts)
-└── agent/
-    └── rules.md                 # Agent architectural rules & best practices
+├── schema/                 # SQL migrations or ORM schemas
+│   └── migration.sql
+├── agent/
+│   └── rules.md            # Architectural guidelines for AI agents
+└── tests/                  # Verification test fixtures
 ```
 
-### Testing Your Skill Locally
+### Example `skill.json`:
 
-Verify that your manifest adheres strictly to Zod validation:
-
-```bash
-# Run manifest validation tests
-pnpm --filter @vibe-skill/manifest test
-
-# Test end-to-end installation against local fixture
-node apps/cli/dist/index.js add skills/my-new-skill --cwd apps/cli/fixtures/sample-app --dry-run
+```json
+{
+  "schemaVersion": "1.0.0",
+  "id": "auth-supabase-rbac",
+  "name": "Supabase Auth with RBAC",
+  "version": "1.0.0",
+  "description": "Production-grade Supabase Auth with SSR middleware and RBAC.",
+  "compatibility": {
+    "framework": "nextjs",
+    "language": "typescript",
+    "router": "app-router"
+  },
+  "dependencies": {
+    "npm": {
+      "@supabase/supabase-js": "^2.45.0",
+      "@supabase/ssr": "^0.5.0"
+    }
+  },
+  "env": [
+    { "key": "NEXT_PUBLIC_SUPABASE_URL", "required": true, "secret": false },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "required": true,
+      "secret": true
+    },
+    { "key": "SUPABASE_SERVICE_ROLE_KEY", "required": true, "secret": true }
+  ],
+  "injections": [
+    {
+      "type": "jsx_wrapper",
+      "targetFile": "src/app/layout.tsx",
+      "import": {
+        "identifier": "AuthProvider",
+        "module": "@/components/auth-provider"
+      },
+      "wrapperComponent": "AuthProvider"
+    }
+  ],
+  "agentContext": {
+    "rulesFile": "agent/rules.md"
+  }
+}
 ```
 
 ---
 
-## 7. Operational Documentation & Governance
+## 7. Architecture & Governance Documentation
 
-For in-depth architectural and operational specifications, consult:
+For complete technical specifications, see:
 
-- [`ARCHITECTURE.md`](ARCHITECTURE.md): System topology, component breakdown, and technology stack.
-- [`DESIGN.md`](DESIGN.md): Idempotency guarantees, non-destructive mutation, and zero-trust manifests.
-- [`FLOW.md`](FLOW.md): 9-stage installation lifecycle and MCP agent interaction flow.
-- [`DECISIONS.md`](DECISIONS.md): Architectural Decision Records (ADRs).
-- [`AGENTS.md`](AGENTS.md): Multi-agent role taxonomy, tool constraints, and context economics.
-- [`RULES.md`](RULES.md): Strict TypeScript standards, AST safety, and conventional commits.
-- [`MEMORY.md`](MEMORY.md): Workspace lockfile schema and rollback checkpoint ledger.
+- [**`ARCHITECTURE.md`**](ARCHITECTURE.md): System design, component breakdown, and tech stack rationale.
+- [**`DESIGN.md`**](DESIGN.md): Deterministic AST scaffolding philosophy and idempotency guarantees.
+- [**`FLOW.md`**](FLOW.md): 9-stage installation lifecycle state machine and MCP protocol sequence diagrams.
+- [**`DECISIONS.md`**](DECISIONS.md): Architectural Decision Records (ADR-001 through ADR-004).
+- [**`AGENTS.md`**](AGENTS.md): Multi-agent taxonomy, tool invocation constraints, and context economics.
+- [**`RULES.md`**](RULES.md): Strict TypeScript standards, AST transformation invariants, and Conventional Commits.
+- [**`MEMORY.md`**](MEMORY.md): State persistence, workspace lockfiles, and checkpoint rollback ledger.
 
 ---
 

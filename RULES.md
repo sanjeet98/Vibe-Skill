@@ -1,96 +1,76 @@
-# Antigravity: Engineering Standards & Execution Rules
+# Antigravity: Code Quality, Safety, & Operational Rules
 
-This document defines the mandatory engineering standards, TypeScript compilation rules, AST transformation guardrails, Git conventions, and error-handling contracts for all contributors and automated agents working in the **Antigravity (Vibe Skill)** monorepo.
+> Mandatory engineering rules, TypeScript standards, AST transformation invariants, Git conventions, and error handling contracts for the Antigravity codebase.
 
 ---
 
 ## 1. Strict TypeScript Standards
 
-All packages in the monorepo inherit from [`packages/tsconfig/base.json`](file:///Users/sanjeetkaul/Downloads/Vibe-Skill/packages/tsconfig/base.json) and must compile with strict compiler enforcements enabled.
+All monorepo packages (`packages/*`, `apps/*`, and `skills/*`) must maintain zero compiler errors under strict TypeScript compiler rules.
 
-### 1.1 Compiler Enforcements
+### 1.1 Strict Compiler Settings
 
-- **`strict: true`**: Full strict suite enabled (`noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `noImplicitThis`, `alwaysStrict`).
-- **`target: "ES2022"`** & **`module: "NodeNext"`**: Pure modern ECMAScript module resolution.
-- **`noUnusedLocals: true`** & **`noUnusedParameters: true`**: Dead code and unused function arguments are treated as compile-time errors.
-- **`exactOptionalPropertyTypes: true`**: Optional keys (`key?: string`) cannot be explicitly assigned `undefined` unless specified as `string | undefined`.
+All `tsconfig.json` configurations must extend `packages/tsconfig/base.json` and enforce:
 
-### 1.2 Prohibited Type Patterns
-
-```typescript
-// ❌ STRICTLY FORBIDDEN: Any-casting or escape hatches
-const rawData = response.json() as any;
-function processItem(item: any): void { ... }
-
-// ❌ FORBIDDEN: Non-null assertions without preceding validation
-const element = sourceFile.getDefaultExportSymbol()!;
-
-// ✅ MANDATORY: Type narrowing and explicit guardrails
-const defaultExport = sourceFile.getDefaultExportSymbol();
-if (!defaultExport) {
-  return { success: false, errors: ["Target file missing default export."] };
-}
-
-// ✅ MANDATORY: Zod schema parsing for untrusted data
-const result = SkillManifestSchema.safeParse(rawJson);
-if (!result.success) {
-  return { success: false, errors: formatZodError(result.error) };
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  }
 }
 ```
 
-### 1.3 Explicit Return Signatures
+### 1.2 Ban on Unsafe Type Assertions (`as any`)
 
-All exported functions, methods, and public API interfaces must declare explicit return types:
-
-```typescript
-// ❌ Discouraged: Inferred return type
-export function detectProject(targetDir: string) { ... }
-
-// ✅ Mandatory: Explicit return interface
-export function detectProject(targetDir: string): ProjectInfo { ... }
-```
+- **`as any` is strictly prohibited** across all production and test code.
+- If handling unknown external data (e.g., raw JSON manifests, CLI arguments, or network responses):
+  - Type the value as `unknown`.
+  - Validate it using a Zod schema (`SkillManifestSchema.safeParse(json)`).
+  - Alternatively, write explicit TypeScript custom type guards (`function isRecord(val: unknown): val is Record<string, unknown>`).
+- Use `as const` where literal types are required.
 
 ---
 
-## 2. AST Transformation Safety Rules
+## 2. AST Transformation Safety & Invariants
 
-The `@vibe-skill/ast-engine` operates directly on user application code. Careless mutations risk corrupting user codebases. Every transformer must adhere to four safety imperatives:
+Modifying user code requires extreme caution. All transformers inside `packages/ast-engine` must adhere to these non-negotiable invariants:
 
-### Rule 2.1: Never Replace Whole Files When a Transformer Exists
+### 2.1 Never Overwrite Whole Files
 
-- Never overwrite a file with raw boilerplate when an AST transformer is available.
-- If a project already has a `src/app/layout.tsx`, the engine must inject imports and wrap JSX tags in-place rather than replacing the layout.
+- When an injection target already exists (e.g., `src/app/layout.tsx`), the engine must parse the AST and manipulate _only_ the specific AST nodes (e.g., imports or JSX tags).
+- Whole-file overwrites are restricted solely to new template files being placed in new locations (e.g., `src/components/auth-provider.tsx`).
 
-### Rule 2.2: Directive & Comment Integrity
+### 2.2 Invariant of Directive & Comment Preservation
 
-- **Top-of-File Directives**: Directives such as `'use client'`, `'use server'`, and `/* eslint-disable */` must remain anchored at the very top of the file (before any injected import statements).
-- **Comment Preservation**: Existing JSDoc blocks, inline explanations, and license headers must never be discarded or reordered.
+- Top-of-file directives (`'use client'`, `'use server'`, `/* eslint-disable */`) must remain at the very top of the file.
+- Injected imports must be inserted _after_ directives, never before them.
+- JSDocs, function comments, and inline annotations must never be stripped or moved during AST node traversal.
 
-### Rule 2.3: Prettier Formatting Guarantee
+### 2.3 Mandatory Prettier Formatting Pass
 
-- Every source file modified by `ts-morph` must be formatted via Prettier before being written to disk:
-  ```typescript
-  const formatted = await prettier.format(sourceFile.getFullText(), {
-    parser: "typescript",
-    ...prettierConfig,
-  });
-  await fs.writeFile(filePath, formatted, "utf8");
-  ```
+- Raw AST node string outputs often contain irregular indentation or spacing.
+- Every modified file must pass through `prettier.format(content, { parser: "typescript" })` before being saved to disk.
 
-### Rule 2.4: Compiler Diagnostic Pre-Check
+### 2.4 Absolute Idempotency
 
-- Before saving any mutated source file, the engine must verify that no syntax errors were introduced:
-  ```typescript
-  const diagnostics = sourceFile.getPreEmitDiagnostics();
-  const syntaxErrors = diagnostics.filter(
-    (d) => d.getCategory() === DiagnosticCategory.Error,
-  );
-  if (syntaxErrors.length > 0) {
-    throw new Error(
-      `Syntax error introduced during AST transformation: ${syntaxErrors[0].getMessageText()}`,
-    );
-  }
-  ```
+- Re-running an AST transformer on an already-modified file must produce **zero diffs**.
+- Import injectors must inspect existing imports before adding symbols.
+- JSX wrappers must inspect parent/child tags to verify if the wrapper already exists.
+- Barrel injectors must inspect existing `export *` statements.
 
 ---
 
@@ -98,66 +78,86 @@ The `@vibe-skill/ast-engine` operates directly on user application code. Careles
 
 ### 3.1 Conventional Commits
 
-All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+All commit messages must strictly adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```text
-<type>(<scope>): <short summary>
+<type>(<scope>): <short description in present tense>
 
 [optional body]
 
 [optional footer(s)]
 ```
 
-| Type           | When to Use                                   | Example                                                     |
-| :------------- | :-------------------------------------------- | :---------------------------------------------------------- |
-| **`feat`**     | Adding new features, skills, or commands      | `feat(cli): add dry-run mode to skill installer`            |
-| **`fix`**      | Bug fixes in engine, schemas, or CLI          | `fix(ast-engine): prevent duplicate named import insertion` |
-| **`docs`**     | Architecture, design, specs, or guide changes | `docs: establish operational governance rules`              |
-| **`chore`**    | Monorepo maintenance, dependencies, tooling   | `chore(deps): update pnpm to 12.15.0`                       |
-| **`refactor`** | Code refactoring without behavior changes     | `refactor(manifest): extract kebab-case regex validator`    |
-| **`test`**     | Adding or modifying unit/e2e test suites      | `test(mcp): add programmatic tool inspection fixtures`      |
+#### Allowed Types:
+
+- `feat:` Introducing a new feature, skill blueprint, or CLI command.
+- `fix:` Fixing a bug or syntax transformation issue.
+- `chore:` Maintenance, monorepo tooling updates, or dependency bumps.
+- `docs:` Documentation, specifications, ADRs, or README updates.
+- `refactor:` Code restructuring without behavioral changes.
+- `test:` Adding or updating unit tests, fixtures, or test harnesses.
+- `style:` Formatting or style adjustments with zero logic modification.
+
+#### Allowed Scopes:
+
+`manifest`, `ast-engine`, `infra-core`, `cli`, `mcp-server`, `skills`, `docs`, `config`.
+
+_Examples:_
+
+- `feat(ast-engine): implement idempotent jsx-wrapper transformer`
+- `fix(cli): resolve relative skill paths when invoked with --cwd`
+- `docs(adr): record architectural decision for ts-morph adoption`
 
 ### 3.2 Branching Strategy
 
-- **`main`**: The primary production and release trunk. Always deployable and tested.
-- **`feat/phase-*`** or **`feat/<feature-name>`**: Short-lived feature branches for major phases or isolated capabilities.
-- **`fix/<issue-name>`**: Targeted bug fix branches.
-- **Pull Request Hygiene**: All PRs must pass `pnpm format:check`, `pnpm lint`, `pnpm build`, and `pnpm test` before merging.
+- **`main`**: The primary source of truth. Contains production-grade, tested code. All releases and tags stem from `main`.
+- **`develop`**: Used in collaborative team sprints as the active integration branch.
+- **`feat/phase-*`**: Feature branches for specific phases (e.g., `feat/phase-1-manifest`, `feat/phase-2-ast-engine`).
+- **Pull Request Rule**: Feature branches must pass `pnpm format:check`, `pnpm lint`, `pnpm build`, and `pnpm test` in GitHub Actions CI before merging.
 
 ---
 
 ## 4. Error Handling Contracts
 
-Uncaught exceptions and unhandled promise rejections degrade developer trust and break AI agent loops. Antigravity mandates structured error contracts.
+Public functions in `@antigravity/manifest`, `@antigravity/ast-engine`, `@antigravity/infra-core`, and all CLI/MCP commands must never throw unhandled exceptions or return untyped errors.
 
-### 4.1 Discriminated Union Return Types
+### 4.1 Structured Result Pattern
 
-All public API functions across the monorepo must return a discriminated union indicating success or failure:
+Public APIs must return structured, discriminated union result objects:
 
 ```typescript
-export type Result<T, E = string> =
+export type Result<T, E = string[]> =
   | { success: true; data: T; errors?: never }
-  | { success: false; data?: never; errors: E[] };
+  | { success: false; errors: E; data?: never };
 ```
 
-#### Example Implementation
+#### Manifest Validation Contract:
 
 ```typescript
-// packages/manifest/src/validator.ts
 export type ValidationResult =
   { success: true; data: SkillManifest } | { success: false; errors: string[] };
 
-export function validateManifest(json: unknown): ValidationResult {
-  const result = SkillManifestSchema.safeParse(json);
-  if (result.success) {
-    return { success: true, data: result.data };
-  }
-  return { success: false, errors: formatZodError(result.error) };
-}
+export function validateManifest(json: unknown): ValidationResult;
 ```
 
-### 4.2 Safe Execution Primitives
+#### AST Injection Contract:
 
-1. **No Silent Failures**: Never catch an error with an empty block (`catch {}`). Either recover cleanly or forward formatted diagnostics in the `errors` array.
-2. **Context-Rich Error Messages**: Error strings must include the target file path, skill ID, or missing key so developers or agents can resolve the issue immediately.
-3. **Atomic Operations**: If a multi-step operation fails halfway through, the engine must revert all intermediate modifications before returning `{ success: false, errors: [...] }`.
+```typescript
+export interface InjectionResult {
+  success: boolean;
+  mutatedFiles: Array<{ filePath: string; hasChanged: boolean }>;
+  errors: string[];
+}
+
+export function applyInjections(
+  projectRoot: string,
+  injections: SkillInjection[],
+  options?: InjectionOptions,
+): Promise<InjectionResult>;
+```
+
+### 4.2 Error Reporting Standards
+
+- Errors must pinpoint the exact JSON path or file line causing the failure.
+- Example: Instead of `"Validation failed"`, report `"injections.0.wrapperComponent: Required"`.
+- In CLI and MCP tools, catch all exceptions and format them into readable diagnostics with actionable recovery steps rather than printing raw stack traces.
