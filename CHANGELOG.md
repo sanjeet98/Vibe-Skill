@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Continuous File Currency & Synchronization Rule**:
+  - Established workspace-wide file synchronization invariant ensuring documentation, specifications, schemas, lockfiles, tests, and changelog remain 100% current whenever code changes occur.
+  - Added dedicated workspace rule in `.agents/rules/file-currency.md`.
+  - Added hierarchical workspace rule in `GEMINI.md`.
+  - Enforced operational rules in `RULES.md` (Section 5) and `AGENTS.md` (Section 4).
+
 ### Planned
 
 - **Phase 4 Registry Client**: Remote package resolution, tarball fetching, and cryptographic SHA-256 verification via `@vibe-skill/infra-core`.

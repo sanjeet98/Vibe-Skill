@@ -161,3 +161,46 @@ export function applyInjections(
 - Errors must pinpoint the exact JSON path or file line causing the failure.
 - Example: Instead of `"Validation failed"`, report `"injections.0.wrapperComponent: Required"`.
 - In CLI and MCP tools, catch all exceptions and format them into readable diagnostics with actionable recovery steps rather than printing raw stack traces.
+
+---
+
+## 5. Continuous File Currency & Synchronization Rule
+
+### 5.1 The Golden Invariant of Documentation & Code Sync
+
+> **Whenever changes occur in ANY file in this codebase, all corresponding dependent files across documentation, specifications, schemas, lockfiles, tests, and changelogs MUST be updated in the same turn/commit.**
+
+No file may be left in an obsolete, stale, or conflicting state.
+
+### 5.2 Mandatory Dependency Matrix
+
+1. **Manifest & Types (`packages/manifest/**`)**:
+   - Must synchronize: `docs/specs/skill-schema-spec.md`, `docs/specs/001-manifest-schema.md`, `packages/manifest/tests/`, `ARCHITECTURE.md`, `CHANGELOG.md`.
+2. **AST Transformers & Engine (`packages/ast-engine/**`)**:
+   - Must synchronize: `packages/ast-engine/tests/`, `DESIGN.md`, `FLOW.md`, `ARCHITECTURE.md`, `CHANGELOG.md`.
+3. **CLI Commands & Flags (`apps/cli/**`)**:
+   - Must synchronize: `apps/cli/tests/`, `README.md`, `ARCHITECTURE.md`, `FLOW.md`, `MEMORY.md`, `CHANGELOG.md`.
+4. **MCP Server Tools (`apps/mcp-server/**`)**:
+   - Must synchronize: `apps/mcp-server/tests/`, `docs/specs/mcp-configuration.md`, `README.md`, `ARCHITECTURE.md`, `FLOW.md`, `CHANGELOG.md`.
+5. **Skill Blueprints (`skills/**`)**:
+   - Must synchronize: `skill.json`, `agent/rules.md`, `README.md`, integration tests, `CHANGELOG.md`.
+6. **Architecture & Philosophy**:
+   - Must synchronize: `ARCHITECTURE.md`, `DESIGN.md`, `FLOW.md`, `DECISIONS.md` (record new ADR), `AGENTS.md`, `RULES.md`.
+7. **State Persistence & Lockfiles**:
+   - Must synchronize: `MEMORY.md`, `apps/cli/src/utils/project.ts`, `apps/mcp-server/src/tools/skills.ts`.
+8. **Security & Auditing**:
+   - Must synchronize: `SECURITY.md`, `AUDIT.md`, `.github/workflows/ci.yml`.
+9. **Testing**:
+   - Must synchronize: `TESTING.md` and package test suites.
+10. **Releases & Version Bumps**:
+    - Must synchronize: root and package `package.json` files, `pnpm-lock.yaml`, `CHANGELOG.md`.
+
+### 5.3 Pre-Completion Verification Gate
+
+Before closing any issue, pull request, or prompt turn, the developer or agent must run:
+
+```bash
+pnpm format && pnpm format:check && pnpm lint && pnpm test && pnpm build
+```
+
+All tasks must succeed with zero errors.

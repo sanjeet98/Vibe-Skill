@@ -134,3 +134,30 @@ Once a skill is successfully installed:
 - Summarize the installation in 2–3 sentences.
 - Reference the updated `.env.local` requirements.
 - Evict intermediate manifest JSON objects and AST transformation traces from subsequent prompt turns to preserve working memory for code generation.
+
+---
+
+## 4. Continuous File Currency & Synchronization Mandate
+
+All autonomous AI coding agents interacting with the Antigravity codebase must adhere to the **Continuous Currency Mandate**:
+
+### 4.1 The Rule
+
+> **Whenever an agent creates, modifies, or deletes code, configuration, or documentation in this repository, it MUST identify and update all dependent files in the same turn before concluding.**
+
+Leaving documentation, tests, specs, lockfiles, or changelog entries out of sync with code modifications is strictly prohibited.
+
+### 4.2 Agent Turn Audit Sequence
+
+Before presenting completion to the user:
+
+1. **Audit Modified Files**: Inspect the set of mutated files.
+2. **Synchronize Dependencies**:
+   - If manifest schemas or types were changed: update `docs/specs/skill-schema-spec.md`, `docs/specs/001-manifest-schema.md`, `packages/manifest/tests/`, and `ARCHITECTURE.md`.
+   - If AST transformers or injectors were changed: update `packages/ast-engine/tests/`, `DESIGN.md`, `FLOW.md`, and `ARCHITECTURE.md`.
+   - If CLI or MCP commands/tools were changed: update `README.md`, `ARCHITECTURE.md`, `FLOW.md`, `docs/specs/mcp-configuration.md`, and fixture tests.
+   - If skills were added or modified: update `skills/<id>/skill.json`, `skills/<id>/agent/rules.md`, and `README.md`.
+   - If state persistence or lockfiles were changed: update `MEMORY.md`.
+   - If security or audit rules were changed: update `SECURITY.md`, `AUDIT.md`, and `.github/workflows/ci.yml`.
+   - If new features, fixes, or deliverables were added: update `CHANGELOG.md` under `[Unreleased]`.
+3. **Run Verification**: Ensure `pnpm format:check`, `pnpm lint`, and `pnpm test` (all 49+ tests) pass cleanly.
